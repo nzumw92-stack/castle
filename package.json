@@ -1,0 +1,9 @@
+{
+  "name": "castle",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test test/",
+    "collect": "node collector/run.mjs"
+  }
+}

@@ -1,0 +1,35 @@
+name: health
+on:
+  schedule:
+    - cron: '23 6 * * *'
+  workflow_dispatch:
+permissions:
+  actions: read
+  issues: write
+  contents: read
+jobs:
+  health:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check the last collector runs
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          runs=$(gh run list -R "$REPO" --workflow collect.yml --limit 6 --json conclusion,createdAt)
+          echo "$runs"
+          bad=$(echo "$runs" | jq '[.[] | select(.conclusion != "success")] | length')
+          total=$(echo "$runs" | jq 'length')
+          last=$(echo "$runs" | jq -r '.[0].createdAt // empty')
+          age=999
+          if [ -n "$last" ]; then age=$(( ( $(date +%s) - $(date -d "$last" +%s) ) / 3600 )); fi
+          problem=""
+          if [ "$total" -ge 6 ] && [ "$bad" -eq 6 ]; then problem="The last 6 collector runs failed."; fi
+          if [ "$age" -gt 6 ]; then problem="$problem The collector has not run for $age hours (GitHub may have paused the schedule)."; fi
+          if [ -z "$problem" ]; then echo "all good"; exit 0; fi
+          open=$(gh issue list -R "$REPO" --label health --state open --json number --jq 'length')
+          if [ "$open" -gt 0 ]; then echo "issue already open"; exit 0; fi
+          gh label create health -R "$REPO" --color B60205 --description "Collector problems" 2>/dev/null || true
+          gh issue create -R "$REPO" --label health --title "Castle collector needs attention" --body "$problem
+
+          Check the Actions tab: https://github.com/$REPO/actions/workflows/collect.yml"

@@ -1,0 +1,45 @@
+name: collect
+on:
+  schedule:
+    - cron: '7,37 * * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: collect
+  cancel-in-progress: false
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - name: Tests
+        run: node --test test/
+      - name: Collect
+        id: run
+        run: |
+          set +e
+          node collector/run.mjs
+          echo "rc=$?" >> "$GITHUB_OUTPUT"
+        env:
+          YT_API_KEY: ${{ secrets.YT_API_KEY }}
+          IG_TOKEN: ${{ secrets.IG_TOKEN }}
+          HASH_SALT: ${{ secrets.HASH_SALT }}
+      - name: Commit
+        run: |
+          git config user.name "castle-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data docs/state.json
+          if git diff --cached --quiet; then echo "nothing changed"; exit 0; fi
+          git commit -m "castle: update $(date -u +%Y-%m-%dT%H:%MZ)"
+          for i in 1 2 3; do git pull --rebase -q && git push -q && exit 0; sleep 5; done
+          exit 1
+      - name: Report platform errors
+        if: steps.run.outputs.rc != '0'
+        run: |
+          echo "A platform failed, see the Collect step. Last known numbers were kept."
+          exit 1

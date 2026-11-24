@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Castle Status</title>
+<style>
+:root{--bg:#efe6d2;--ink:#3a2e22;--muted:#7a6a55;--line:#cdbd9c;--accent:#7a3b22}
+@media (prefers-color-scheme:dark){:root{--bg:#1f1a14;--ink:#eadfc8;--muted:#a8987e;--line:#4a3f30;--accent:#e09a6e}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 Georgia,serif;padding:16px}
+main{max-width:760px;margin:0 auto}
+h1{margin:.2rem 0 0;font-size:1.8rem}
+h2{font-size:1.1rem;margin:1.6rem 0 .5rem;border-bottom:1px solid var(--line);padding-bottom:.2rem}
+.muted{color:var(--muted);font-size:.9rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px}
+.card{border:1px solid var(--line);border-radius:6px;padding:8px 10px}
+.big{font-size:1.6rem;font-weight:bold}
+table{width:100%;border-collapse:collapse;font-size:.95rem}
+td,th{text-align:left;padding:4px 6px;border-bottom:1px solid var(--line)}
+.bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--accent)}
+.warn{color:var(--accent);font-weight:bold}
+</style>
+</head>
+<body>
+<main>
+<h1>🏰 <span id="name">The Castle</span></h1>
+<p class="muted">Raw numbers while the castle is being built. Castle numbers are calculated by Hardly Dark Ages from YouTube and Instagram data, not provided by YouTube or Instagram.</p>
+<p id="msg" class="muted">Loading…</p>
+<div id="out" hidden>
+  <div class="grid">
+    <div class="card"><div class="muted">Residents</div><div class="big" id="pop"></div><div class="muted" id="popsplit"></div></div>
+    <div class="card"><div class="muted">Phase</div><div class="big" id="phase"></div></div>
+    <div class="card"><div class="muted">Stones this week</div><div class="big" id="week"></div><div class="muted" id="stock"></div></div>
+  </div>
+  <h2>Vote</h2><div id="vote"></div>
+  <h2>Buildings</h2><table id="bld"></table>
+  <h2>Chronicle</h2><table id="chr"></table>
+  <h2>Named residents</h2><div id="named"></div>
+</div>
+</main>
+<script>
+const $ = id => document.getElementById(id);
+const el = (tag, text) => { const e = document.createElement(tag); if (text != null) e.textContent = text; return e; };
+const when = s => new Date(s).toLocaleString(undefined, { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+function row(table, cells) { const tr = el('tr'); for (const c of cells) { const td = el('td'); if (c instanceof Node) td.append(c); else td.textContent = c; tr.append(td); } table.append(tr); }
+async function load() {
+  try {
+    const s = await (await fetch('state.json', { cache: 'no-store' })).json();
+    $('name').textContent = s.castle.name || 'The Castle (name vote running)';
+    const stale = Object.entries(s.stale || {}).map(([p, t]) => `${p === 'ig' ? 'Instagram' : 'YouTube'} data not updated since ${when(t)}`);
+    $('msg').textContent = (s.started ? '' : `Not started yet. Start: ${when(s.start)}. `) + `Last change: ${when(s.updated)}.`;
+    if (stale.length) { const w = el('div', stale.join(' · ')); w.className = 'warn'; $('msg').append(w); }
+    $('pop').textContent = s.population.total;
+    $('popsplit').textContent = `YouTube ${s.population.youtube} · Instagram ${s.population.instagram} · named ${s.population.named}`;
+    $('phase').textContent = ['', 'I', 'II', 'III', 'IV', 'V'][s.castle.phase] || s.castle.phase;
+    $('week').textContent = s.stones.thisWeek;
+    $('stock').textContent = `in stock: ${s.stones.stock} · total: ${s.stones.total}`;
+    const v = $('vote'); v.textContent = '';
+    if (s.vote) {
+      v.append(el('p', `${s.vote.kind === 'name' ? 'Name the castle' : 'What should be built next?'} Closes ${when(s.vote.closes)}. Comment !A, !B or !C under any video or reel.`));
+      const t = el('table'); for (const o of s.vote.options) row(t, [`!${o.key}`, o.id, `${o.votes} votes`]); v.append(t);
+    } else v.append(el('p', 'No vote open.'));
+    const b = $('bld'); b.textContent = '';
+    for (const x of s.buildings) {
+      let st = x.state;
+      if (x.state === 'building') { const bar = el('div'); bar.className = 'bar'; const i = el('i'); i.style.width = Math.round(x.progress * 100) + '%'; bar.append(i); st = el('div'); st.append(`building · ${x.stones}/${x.need} stones`, bar); }
+      row(b, [x.id, st]);
+    }
+    const c = $('chr'); c.textContent = '';
+    for (const x of s.chronicle) row(c, [when(x.t), x.text]);
+    const n = $('named'); n.textContent = '';
+    const named = s.residents.filter(r => r.name);
+    n.append(el('p', named.length ? named.map(r => `@${r.name} (${r.job})`).join(', ') : 'Nobody yet. Comment !join on Instagram @hardlydarkages.'));
+    $('out').hidden = false;
+  } catch (e) { $('msg').textContent = 'Could not load state.json.'; }
+}
+load(); setInterval(load, 5 * 60 * 1000);
+</script>
+</body>
+</html>

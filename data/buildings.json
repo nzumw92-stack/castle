@@ -1,0 +1,38 @@
+{
+  "_note": "Provisional list from GEBAEUDE-RECHERCHE.md (23.11.2026). Info texts follow in Phase 2 after the fact check. stones = base need before the community factor.",
+  "phases": [
+    { "n": 1, "from": 0 },
+    { "n": 2, "from": 20 },
+    { "n": 3, "from": 60 },
+    { "n": 4, "from": 120 }
+  ],
+  "stonesByPhase": { "1": 15, "2": 30, "3": 80, "4": 100 },
+  "buildings": {
+    "motte":     { "phase": 1, "pop": 0,   "needs": [],                 "jobs": ["labourer", "carpenter"] },
+    "bailey":    { "phase": 1, "pop": 5,   "needs": ["motte"],          "jobs": ["carpenter", "watchman"] },
+    "hall":      { "phase": 1, "pop": 10,  "needs": ["bailey"],         "jobs": ["steward", "servant"] },
+    "chapel":    { "phase": 1, "pop": 10,  "needs": ["hall"],           "jobs": ["chaplain"] },
+    "well":      { "phase": 1, "pop": 10,  "needs": ["bailey"],         "jobs": [] },
+    "kitchen":   { "phase": 1, "pop": 15,  "needs": ["hall"],           "jobs": ["cook", "scullion"] },
+    "garderobe": { "phase": 1, "pop": 15,  "needs": ["hall"],           "jobs": ["gongfermor"] },
+    "fields":    { "phase": 2, "pop": 0,   "needs": [],                 "jobs": ["ploughman", "hayward"] },
+    "watermill": { "phase": 2, "pop": 20,  "needs": ["fields"],         "jobs": ["miller"] },
+    "church":    { "phase": 2, "pop": 30,  "needs": [],                 "jobs": ["priest", "parish clerk"] },
+    "bakehouse": { "phase": 2, "pop": 30,  "needs": ["watermill"],      "jobs": ["baker"] },
+    "brewhouse": { "phase": 2, "pop": 30,  "needs": ["well", "fields"], "jobs": ["brewster", "ale-taster"] },
+    "smithy":    { "phase": 2, "pop": 25,  "needs": ["bailey"],         "jobs": ["smith"] },
+    "stables":   { "phase": 2, "pop": 25,  "needs": ["smithy"],         "jobs": ["groom", "carter"] },
+    "dovecote":  { "phase": 2, "pop": 40,  "needs": ["hall"],           "jobs": [] },
+    "fishpond":  { "phase": 2, "pop": 40,  "needs": ["watermill"],      "jobs": ["fisher"] },
+    "keep":      { "phase": 3, "pop": 60,  "needs": ["hall", "well"],   "jobs": ["mason", "constable"] },
+    "gatehouse": { "phase": 3, "pop": 80,  "needs": ["keep"],           "jobs": ["porter"] },
+    "curtain":   { "phase": 3, "pop": 100, "needs": ["gatehouse"],      "jobs": ["mason", "guard"] },
+    "towers":    { "phase": 3, "pop": 120, "needs": ["curtain"],        "jobs": ["crossbowman"] },
+    "moat":      { "phase": 3, "pop": 100, "needs": ["curtain"],        "jobs": [] },
+    "windmill":  { "phase": 4, "pop": 120, "needs": ["fields"],         "jobs": ["miller"] },
+    "market":    { "phase": 4, "pop": 150, "needs": ["church"],         "jobs": ["chapman", "market reeve"] },
+    "barn":      { "phase": 4, "pop": 150, "needs": ["church", "fields"], "jobs": ["granger"] },
+    "hospital":  { "phase": 4, "pop": 200, "needs": ["church"],         "jobs": ["hospital brother"] },
+    "tannery":   { "phase": 4, "pop": 200, "needs": ["market"],         "jobs": ["tanner"] }
+  }
+}

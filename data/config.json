@@ -1,0 +1,11 @@
+{
+  "_note": "start: comments before this moment do not count. firstBuildings are built during the name vote week. Set to the real launch time before going live; the whole state is recomputed from the ledger.",
+  "start": "2026-11-24T18:00:00Z",
+  "seed": 1066,
+  "firstBuildings": ["motte", "bailey"],
+  "nameVote": ["Hardlington", "Castle Nottoodark", "Little Mudbury"],
+  "minBuildDays": 2,
+  "stonesPerDay": 3,
+  "youtube": { "channelId": "UCADrxi5hgPgvbiYQM_nCAIA" },
+  "instagram": { "userId": "17841414417756373", "username": "hardlydarkages" }
+}

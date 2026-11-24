@@ -1,0 +1,7 @@
+{
+  "_source": "GEBAEUDE-RECHERCHE.md: Henry III Fine Rolls (Hartland), Postles 2006, Withycombe. To be switched to Holy Roman Empire names later.",
+  "male": ["William", "John", "Richard", "Robert", "Henry", "Ralph", "Thomas", "Walter", "Roger", "Hugh", "Geoffrey", "Simon", "Nicholas", "Adam", "Peter", "Gilbert", "Stephen", "Alan", "Philip", "Reginald", "Osbert", "Elias", "Jordan", "Martin", "Laurence", "Ranulf", "Baldwin", "Matthew", "Bartholomew", "Andrew", "Alexander", "Hamo"],
+  "female": ["Alice", "Matilda", "Agnes", "Margaret", "Joan", "Isabel", "Emma", "Beatrice", "Mabel", "Cecily", "Christina", "Edith", "Juliana", "Avice", "Hawise", "Lettice", "Amice", "Margery", "Petronilla", "Rose", "Eleanor", "Sibyl", "Lucy", "Katherine", "Felicia", "Muriel", "Ellen", "Sarah"],
+  "occupational": ["Webster", "Wright", "Cooper", "Skinner", "Fuller", "Dyer", "Taylor", "Shepherd", "Reeve", "Thatcher", "Fletcher", "Butcher", "Glover", "Potter", "Turner"],
+  "places": ["Welle", "Brook", "Hill", "Wode", "Grene", "Mille", "Brigge", "Ford"]
+}

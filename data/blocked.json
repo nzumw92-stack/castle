@@ -1,0 +1,5 @@
+{
+  "_note": "Usernames containing one of these words do not get a named house (they still count as stones). Add handles to 'users' to block someone by hand.",
+  "words": ["fuck", "shit", "cunt", "nigg", "fag", "rape", "nazi", "hitler", "porn", "sex", "dick", "cock", "pussy", "whore", "slut", "bitch", "kill", "onlyfans", "crypto", "nsfw"],
+  "users": []
+}
