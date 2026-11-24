@@ -1,0 +1,21 @@
+name: yttest
+on:
+  workflow_dispatch:
+    inputs:
+      who:
+        description: YouTube display name of the test account
+        required: true
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - run: node scripts/yttest.mjs
+        env:
+          YT_API_KEY: ${{ secrets.YT_API_KEY }}
+          WHO: ${{ inputs.who }}
