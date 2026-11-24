@@ -43,7 +43,7 @@ else {
     out(label, list.map(x => `${x.username || '?'}:${x.id}`).join(', ') || 'empty');
     igId ||= list[0]?.id;
   }
-  for (const id of [igId, '1419360504600633'].filter(Boolean)) {
+  for (const id of [igId, '17841414417756373'].filter(Boolean)) {
     const u = await get(`${G}/${id}?fields=id,username,followers_count,media_count&access_token=${IG}`);
     if (err(u)) { out(`account ${id}`, err(u)); continue; }
     out('ig user id', u.id); out('username', u.username); out('followers', String(u.followers_count)); out('posts', String(u.media_count));
