@@ -18,7 +18,7 @@ jobs:
         with:
           node-version: 22
       - name: Tests
-        run: node --test test/
+        run: node --test
       - name: Collect
         id: run
         run: |
