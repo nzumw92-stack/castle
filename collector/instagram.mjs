@@ -15,7 +15,7 @@ async function* pages(first, token, max = 10) {
 }
 
 const FIELDS = 'id,text,timestamp,username,from{id,username}';
-const pick = (c, parentId) => ({ id: c.id, author: c.from?.id || c.username, username: c.from?.username || c.username, text: c.text || '', t: c.timestamp, parentId });
+const pick = (c, parentId) => ({ id: c.id, author: c.from?.id || c.username, username: c.from?.username || c.username, text: c.text || '', t: String(c.timestamp).replace(/([+-]\d\d)(\d\d)$/, '$1:$2').replace(/\+00:00$/, 'Z'), parentId });
 
 // full=false: only posts from the last 30 days (the API budget scales with impressions, so we stay frugal)
 export async function fetchInstagram({ token, userId, username, full = false, now = new Date() }) {
