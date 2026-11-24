@@ -26,6 +26,12 @@ else {
   const me = await get(`${G}/me?fields=id,name&access_token=${IG}`);
   out('token owner', err(me) || me.name);
   let igId = null;
+  const dbg = await get(`${G}/debug_token?input_token=${IG}&access_token=${IG}`);
+  if (err(dbg)) out('debug_token', err(dbg));
+  else { const d = dbg.data || {}; out('token type', d.type); out('expires', String(d.expires_at)); out('scopes', (d.scopes||[]).join(' '));
+    for (const g of d.granular_scopes || []) { out('  ' + g.scope, (g.target_ids||['all']).join(',')); if (g.scope === 'instagram_basic' && g.target_ids) igId ||= g.target_ids[0]; } }
+  const gi = await get(`https://graph.instagram.com/v21.0/me?fields=user_id,username,followers_count&access_token=${IG}`);
+  out('graph.instagram.com/me', err(gi) || `${gi.username}:${gi.user_id} followers ${gi.followers_count}`);
   for (const [label, url] of [
     ['business instagram_accounts', `${G}/1499167815609601/instagram_accounts?fields=id,username&access_token=${IG}`],
     ['business owned_instagram', `${G}/1499167815609601/owned_instagram_accounts?fields=id,username&access_token=${IG}`],
