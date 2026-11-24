@@ -1,7 +1,7 @@
 {
-  "_source": "GEBAEUDE-RECHERCHE.md: Henry III Fine Rolls (Hartland), Postles 2006, Withycombe. To be switched to Holy Roman Empire names later.",
-  "male": ["William", "John", "Richard", "Robert", "Henry", "Ralph", "Thomas", "Walter", "Roger", "Hugh", "Geoffrey", "Simon", "Nicholas", "Adam", "Peter", "Gilbert", "Stephen", "Alan", "Philip", "Reginald", "Osbert", "Elias", "Jordan", "Martin", "Laurence", "Ranulf", "Baldwin", "Matthew", "Bartholomew", "Andrew", "Alexander", "Hamo"],
-  "female": ["Alice", "Matilda", "Agnes", "Margaret", "Joan", "Isabel", "Emma", "Beatrice", "Mabel", "Cecily", "Christina", "Edith", "Juliana", "Avice", "Hawise", "Lettice", "Amice", "Margery", "Petronilla", "Rose", "Eleanor", "Sibyl", "Lucy", "Katherine", "Felicia", "Muriel", "Ellen", "Sarah"],
-  "occupational": ["Webster", "Wright", "Cooper", "Skinner", "Fuller", "Dyer", "Taylor", "Shepherd", "Reeve", "Thatcher", "Fletcher", "Butcher", "Glover", "Potter", "Turner"],
-  "places": ["Welle", "Brook", "Hill", "Wode", "Grene", "Mille", "Brigge", "Ford"]
+  "_source": "GEBAEUDE-RECHERCHE.md (24.11.2026): Mulch, Arnsburger Personennamen 1200-1250 (via SCA), Socin, Mittelhochdeutsches Namenbuch (Upper Rhine, 12th-13th c.), Ad fontes UZH. Most common names first. Bynames were not yet hereditary; women's job bynames take -in (Weberin).",
+  "male": ["Heinrich", "Hermann", "Konrad", "Wilhelm", "Werner", "Hartmann", "Dietrich", "Wigand", "Ditmar", "Friedrich", "Ulrich", "Otto", "Berthold", "Rudolf", "Walther", "Albrecht", "Burkhard", "Hugo", "Johannes", "Nikolaus", "Peter", "Jakob", "Eberhard", "Gottfried", "Siegfried", "Rüdiger", "Gerhard", "Ludwig", "Arnold", "Marquard", "Ortwin", "Gottschalk"],
+  "female": ["Gertrud", "Elisabeth", "Liutgard", "Kunigunde", "Adelheid", "Mechthild", "Christina", "Guda", "Hedwig", "Agnes", "Anna", "Margarethe", "Katharina", "Sophia", "Gisela", "Richenza", "Ita", "Bertha", "Clara", "Irmgard", "Jutta", "Hildegard", "Judith", "Petrissa", "Metza"],
+  "occupational": ["Weber", "Schneider", "Koch", "Metzger", "Kürschner", "Färber", "Krämer", "Hafner", "Seiler", "Lederer", "Scherer", "Sporer", "Wirt", "Keller", "Meier"],
+  "places": ["vom Bach", "am Berg", "zum Brunnen", "am Graben", "im Hof", "zum Tor", "am Weg", "zur Linde", "am Feld", "zur Mühle"]
 }
