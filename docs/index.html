@@ -205,7 +205,7 @@ html:not(.fok) .hud{visibility:hidden}
     <p class="ilead">A medieval town that grows with the Hardly Dark Ages community. Every follower on YouTube and Instagram lives here, so the town is only as big as the channel.</p>
     <ul>
      <li><b>Follow</b> and you move in. A new house goes up for every five residents.</li>
-     <li><b>Comment</b> on any video or reel and your comment becomes a stone for the building site (up to three a day).</li>
+     <li><b>Comment</b> on any video or reel and your comment becomes a stone for the building site (at least 3 letters, up to three stones a day).</li>
      <li><b>Vote</b> on what gets built next: comment <code>!A</code>, <code>!B</code> or <code>!C</code> under any video. A new vote opens every Sunday.</li>
      <li><b>Your name on a house?</b> Comment <code>!join</code> on Instagram, then use “Find me”.</li>
      <li><b>Updates every 30 minutes:</b> new residents, stones and votes show up at the next count, so don't worry if nothing moves right away.</li>
@@ -443,7 +443,7 @@ const G=(x,z)=>{const s=stripInfo(x,z);return H(x,z)-(s&&fieldOn(s.f)?cropLift(s
 const stage=document.getElementById('stage');
 const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});
 const lowEnd=innerWidth<760;
-renderer.setPixelRatio(Math.min(devicePixelRatio,lowEnd?1.25:1.75));
+renderer.setPixelRatio(Math.min(devicePixelRatio,lowEnd?1.25:1.5));
 renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFShadowMap;
 renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.0;
 stage.appendChild(renderer.domElement);
@@ -1659,6 +1659,13 @@ const bloom=new UnrealBloomPass(new THREE.Vector2(256,256),.75,.5,.82);composer.
 const tH=new ShaderPass(HorizontalTiltShiftShader),tV=new ShaderPass(VerticalTiltShiftShader);composer.addPass(tH);composer.addPass(tV);
 composer.addPass(new OutputPass());if(!lowEnd)composer.addPass(new SMAAPass());
 let FX=!lowEnd;
+const PRS=[1.75,1.5,1.25,1,.85,.7];let prMax=Math.min(devicePixelRatio,lowEnd?1.25:1.75),prCeil=prMax,pgAcc=0,pgN=0,pgT=0,pgUp=0,pgSet=0;
+function prApply(q){q=Math.max(.7,Math.min(prMax,q));if(Math.abs(q-renderer.getPixelRatio())<.01)return;renderer.setPixelRatio(q);composer.setPixelRatio(q);if(aoPass)aoPass.configuration.halfRes=lowEnd||q<=1.1;resize()}
+function perfGov(dt){if(document.hidden||T<6||dt>=.05&&pgN===0)return;pgT+=dt;pgN++;pgAcc+=dt;if(pgT<2)return;const avg=pgAcc/pgN;pgT=pgAcc=pgN=0;const now=T,cur=renderer.getPixelRatio();
+ if(now-pgSet<1.5)return;
+ if(avg>.024){const nx=PRS.find(q=>q<cur-.01);if(nx){if(now-pgUp<6)prCeil=Math.min(prCeil,cur-.01);prApply(nx);pgSet=now}}
+ else if(avg<.0175&&now-pgSet>8){const up=[...PRS].reverse().find(q=>q>cur+.01&&q<=prCeil+.001&&q<=prMax+.001);if(up){prApply(up);pgSet=pgUp=now}}}
+window.__perf=()=>({pr:renderer.getPixelRatio(),ceil:prCeil,max:prMax});
 function resize(){const r=stage.getBoundingClientRect();renderer.setSize(r.width,r.height,false);composer.setSize(r.width,r.height);const pr=renderer.getPixelRatio();nrt.setSize(Math.round(r.width*pr),Math.round(r.height*pr));inkPass.uniforms.res.value.set(r.width*pr,r.height*pr);inkPass.uniforms.lw.value=Math.max(1,pr*(WOOD?1.4:1.1));camera.aspect=r.width/r.height;camera.updateProjectionMatrix();tH.uniforms.h.value=1.8/r.width;tV.uniforms.v.value=1.8/r.height;tH.uniforms.r.value=tV.uniforms.r.value=.52}
 addEventListener('resize',resize);
 
@@ -1903,7 +1910,7 @@ function updateLabels(){const r=renderer.domElement.getBoundingClientRect();cons
 /* ================= loop ================= */
 const timer=new THREE.Timer();timer.connect(document);let T=0,hudT=0;
 const smPos=smokePts.geometry.attributes.position,smCol=smokePts.geometry.attributes.color;
-function frame(){timer.update();const dt=Math.min(.05,timer.getDelta());T+=dt;
+function frame(){timer.update();const dt=Math.min(.05,timer.getDelta());T+=dt;perfGov(dt);
  curHour=nowHour();const L=applyLight(curHour);const work=workHours(curHour);
  stepPeople(dt,curHour,T);stepAnimals(dt,T,work);updateInstances(T);
  // smoke
