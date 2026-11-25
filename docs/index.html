@@ -10,11 +10,9 @@
 <meta property="og:description" content="A medieval castle that grows with its community. Find yourself among the residents.">
 <meta property="og:url" content="https://castle.hardlydarkages.com/">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='%232e2219' d='M1 15V5h2v2h2V5h2v2h2V5h2v2h2V5h2v10z'/%3E%3C/svg%3E">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&display=swap">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&display=swap" media="print" onload="this.media='all';fontsGo()">
-<script>function fontsGo(){Promise.all([document.fonts.load('16px "Source Serif 4"'),document.fonts.load('28px "IM Fell English"')]).finally(function(){document.documentElement.classList.add('fok')})}setTimeout(function(){document.documentElement.classList.add('fok')},3500)</script>
+<link rel="preload" as="font" type="font/woff2" href="fonts/source-serif-4-latin-400-normal.woff2" crossorigin>
+<style>@font-face{font-family:"IM Fell English";src:url(fonts/im-fell-english-latin-400-normal.woff2) format("woff2");font-weight:400;font-style:normal;font-display:swap}@font-face{font-family:"IM Fell English";src:url(fonts/im-fell-english-latin-400-italic.woff2) format("woff2");font-weight:400;font-style:italic;font-display:swap}@font-face{font-family:"Source Serif 4";src:url(fonts/source-serif-4-latin-400-normal.woff2) format("woff2");font-weight:400;font-style:normal;font-display:swap}@font-face{font-family:"Source Serif 4";src:url(fonts/source-serif-4-latin-400-italic.woff2) format("woff2");font-weight:400;font-style:italic;font-display:swap}@font-face{font-family:"Source Serif 4";src:url(fonts/source-serif-4-latin-600-normal.woff2) format("woff2");font-weight:500 800;font-style:normal;font-display:swap}</style>
+<script>function fontsGo(){Promise.all([document.fonts.load('16px "Source Serif 4"'),document.fonts.load('28px "IM Fell English"')]).finally(function(){document.documentElement.classList.add('fok')})}fontsGo();setTimeout(function(){document.documentElement.classList.add('fok')},3500)</script>
 <style>
 /* Layout: notes column, then a full-width "castle page" with the 3D diorama and floating HUD panels. Single parchment look by choice. */
 :root{--desk:#d9c9a2;--vellum:#f3e9d1;--vhi:#faf4e4;--ink:#2e2219;--muted:#6c5a45;--lapis:#24427f;--verm:#b5361f;--gold:#a7832b;--rule:#d3bf93;--ig:#7a3f8f;
@@ -250,7 +248,7 @@ html,body{margin:0;padding:0;height:100dvh;overflow:hidden}
 .page{border:0;border-radius:0;box-shadow:none;flex:1;display:flex;flex-direction:column;min-height:0}
 .stage{flex:1;height:auto;min-height:0}
 .foot{border-top:1.5px solid var(--ink);padding:6px max(14px,env(safe-area-inset-left,0px)) max(6px,env(safe-area-inset-bottom,0px))}
-.foot a{color:var(--lapis)}
+.foot a{color:var(--lapis)}.stage #ctrlPanel a.legal{font-size:12px;color:var(--muted);text-decoration:underline}
 html:not(.fok) .hud{visibility:hidden}
 .foot{font-size:12px}.now .k{font-size:12px}
 .ht{display:none}@media (pointer:coarse){.hm{display:none}.ht{display:inline}}
@@ -278,6 +276,7 @@ html:not(.fok) .hud{visibility:hidden}
     <div class="panel ctrl" id="ctrlPanel">
      <div class="row"><a class="btn home" href="https://hardlydarkages.com" target="_blank" rel="noopener">🏠 Go to hardlydarkages.com</a></div>
      <div class="row"><a class="btn soc syt" href="https://www.youtube.com/channel/UCADrxi5hgPgvbiYQM_nCAIA" target="_blank" rel="noopener">▶ YouTube</a><a class="btn soc sig" href="https://www.instagram.com/hardlydarkages/" target="_blank" rel="noopener">◎ Instagram</a></div>
+     <div class="row"><a class="legal" href="https://hardlydarkages.com/privacy/">Imprint &amp; privacy</a></div>
      <div class="row"><button class="btn" type="button" onclick="openIntro()">What is this castle?</button><button class="btn" type="button" onclick="openShelf()">🧱 Toys &amp; books</button></div>
      <div class="row" id="chron"></div>
      <div class="row" id="times"></div>
@@ -348,7 +347,7 @@ html:not(.fok) .hud{visibility:hidden}
     if(!seen)openIntro()})()</script>
    <div class="hint" id="hint"><span class="hm">Drag to move · right-drag to turn · click people and buildings</span><span class="ht">Drag to move · two fingers to turn and zoom · tap people and buildings</span></div>
   </div>
-  <div class="foot"><span class="fnote">Castle numbers are calculated by Hardly Dark Ages from YouTube and Instagram data. Residents shown with a name joined on Instagram with !join; everyone else lives here under a medieval name.</span><nav class="flinks"><a href="#" onclick="openIntro();return false">What is this?</a><a href="#" onclick="openShelf();return false">🧱 Toys &amp; books</a><a class="fhome" href="https://hardlydarkages.com">🏠 hardlydarkages.com</a></nav></div>
+  <div class="foot"><span class="fnote">Castle numbers are calculated by Hardly Dark Ages from YouTube and Instagram data. Residents shown with a name joined on Instagram with !join; everyone else lives here under a medieval name.</span><nav class="flinks"><a href="#" onclick="openIntro();return false">What is this?</a><a href="#" onclick="openShelf();return false">🧱 Toys &amp; books</a><a href="https://hardlydarkages.com/privacy/">Imprint &amp; privacy</a><a class="fhome" href="https://hardlydarkages.com">🏠 hardlydarkages.com</a></nav></div>
  </div>
 
 
@@ -1600,8 +1599,72 @@ let PLOUGH=null;
 const NP=2100;
 const pm=(geo,mat)=>{const m=new THREE.InstancedMesh(geo,mat,NP);m.castShadow=true;m.frustumCulled=false;m.instanceMatrix.setUsage(THREE.DynamicDrawUsage);scene.add(m);return m};
 const pMat=()=>new THREE.MeshToonMaterial({gradientMap:GRAD});
-const BODYG=new THREE.CylinderGeometry(.6,1,1,7);
-const PM={legL:pm(BOX,pMat()),legR:pm(BOX,pMat()),body:pm(BODYG,pMat()),head:pm(new THREE.IcosahedronGeometry(1,1),pMat()),hood:pm(new THREE.ConeGeometry(1,1,7),pMat()),armL:pm(BOX,pMat()),armR:pm(BOX,pMat()),tool:pm(BOX,std('#6a5038')),load:pm(BOX,pMat())};
+const PPL=(()=>{const lo=lowEnd,L=c=>new THREE.Color(c);
+ // paint fixed colours: f(x,y,z) returns [hex,mix] or null
+ const fix=(g,f)=>{const p=g.attributes.position,a=new Float32Array(p.count*4);for(let i=0;i<p.count;i++){const r=f(p.getX(i),p.getY(i),p.getZ(i));if(r){const c=L(r[0]);a.set([c.r,c.g,c.b,r[1]],i*4)}}g.setAttribute('fixc',new THREE.BufferAttribute(a,4));return g};
+ const T=(g,x,y,z,sx=1,sy=1,sz=1,rx=0)=>{g.scale(sx,sy,sz);if(rx)g.rotateX(rx);g.translate(x,y,z);return g};
+ const M=gs=>mergeGeometries(gs.map(g=>g.index?g.toNonIndexed():g));
+ const seg=lo?8:12;
+ // tunic (unit: y -.5..5, scaled by the old body matrix)
+ const prof=[[0,.5],[.3,.5],[.58,.47],[.66,.38],[.63,.14],[.56,-.01],[.565,-.02],[.565,-.1],[.58,-.11],[.72,-.26],[.9,-.45],[.95,-.5],[0,-.5]].reverse().map(([r,y])=>new THREE.Vector2(r,y));
+ const body=fix(new THREE.LatheGeometry(prof,seg),(x,y)=>y<=-.02&&y>=-.1?['#4a2f1c',1]:null);
+ // arm: sleeve, cuff, hand (unit: shoulder y=.5, hand y=-.45)
+ const arm=M([T(new THREE.SphereGeometry(1,8,5),0,.47,0,.58,.07,.58),T(new THREE.CylinderGeometry(.56,.62,.84,8),0,.07,0),T(new THREE.CylinderGeometry(.7,.7,.07,8),0,-.34,0),T(new THREE.SphereGeometry(1,8,6),0,-.44,.03,.5,.09,.48)]);
+ fix(arm,(x,y)=>y<-.375?['#dcae8a',1]:null);
+ // leg: hose and a shoe pointing forward (unit: hip y=.5, sole y=-.5)
+ const leg=M([T(new THREE.CylinderGeometry(.5,.38,.9,7),0,.05,0),T(new THREE.SphereGeometry(1,8,5),0,-.45,.2,.48,.06,.78)]);
+ fix(leg,(x,y)=>y<-.39?['#3a2a1e',1]:null);
+ // head: sphere with the face at +z, uv squeezed into one atlas column; a small nose
+ const hg=new THREE.SphereGeometry(1,lo?12:16,lo?9:12);hg.rotateY(-Math.PI/2);
+ const nose=T(new THREE.SphereGeometry(1,6,4),0,-.1,.95,.13,.15,.09);{const u=nose.attributes.uv;for(let i=0;i<u.count;i++)u.setXY(i,.5,.47)}
+ const head=M([hg,nose]);{const u=head.attributes.uv;for(let i=0;i<u.count;i++)u.setX(i,u.getX(i)*.25)}
+ const faceV=new THREE.InstancedBufferAttribute(new Float32Array(NP),1);head.setAttribute('faceV',faceV);
+ // men's hood: cowl open at the face, shoulder cape, short tail at the back (unit: head radius)
+ const hood=M([T(new THREE.SphereGeometry(1.17,14,4,0,Math.PI*2,0,Math.PI*.33),0,.07,-.05),T(new THREE.SphereGeometry(1.17,14,6,Math.PI/2+1.05,Math.PI*2-2.1,Math.PI*.33,Math.PI*.41),0,.07,-.05),
+  T(new THREE.CylinderGeometry(1.0,2.4,1.15,seg+2,1,true),0,-1.3,-.05),
+  T(new THREE.ConeGeometry(.24,1.3,6),0,.25,-1.55,1,1,1,-2.2)]);
+ // women's veil: head cloth, drape down the back, wimple round the neck
+ const veil=M([T(new THREE.SphereGeometry(1.14,14,4,0,Math.PI*2,0,Math.PI*.3),0,.06,-.03),T(new THREE.SphereGeometry(1.14,14,5,Math.PI/2+1.2,Math.PI*2-2.4,Math.PI*.3,Math.PI*.3),0,.06,-.03),
+  T(new THREE.CylinderGeometry(1.1,1.75,1.6,12,1,true,Math.PI-1.75,3.5),0,-.72,-.04),
+  T(new THREE.CylinderGeometry(.78,1.05,.62,12,1,true),0,-.98,.02)]);
+ // face atlas: 4 columns, face centred in each column, white = skin (multiplied by the skin colour)
+ const W=lo?1024:2048,H=W/4,cv=document.createElement('canvas');cv.width=W;cv.height=H;const x=cv.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,W,H);
+ const k=H/256,ink='#2a2119';x.lineCap='round';
+ for(let v=0;v<4;v++){const cx=v*H+H/2,eY=(1-.56)*H,dx=15*k;
+  const eye=(ex)=>{x.fillStyle=ink;x.beginPath();x.ellipse(ex,eY,4.2*k,5.4*k,0,0,7);x.fill();x.fillStyle='#fff';x.beginPath();x.arc(ex+1.4*k,eY-1.9*k,1.5*k,0,7);x.fill()};
+  // cheeks
+  x.fillStyle=v===3?'rgba(232,120,110,.55)':'rgba(220,120,100,.35)';for(const s2 of[-1,1]){x.beginPath();x.ellipse(cx+s2*23*k,eY+15*k,7*k,4.5*k,0,0,7);x.fill()}
+  for(const s2 of[-1,1])eye(cx+s2*dx);
+  // brows
+  x.strokeStyle=v===3?'#5a4030':'#4a3322';x.lineWidth=(v===2?3.4:v===3?1.6:2.4)*k;
+  for(const s2 of[-1,1]){x.beginPath();x.moveTo(cx+s2*(dx-6*k),eY-10*k);x.quadraticCurveTo(cx+s2*dx,eY-(v===2?15:14.5)*k,cx+s2*(dx+6*k),eY-11*k);x.stroke()}
+  if(v===3){x.lineWidth=1.3*k;x.strokeStyle=ink;for(const s2 of[-1,1]){x.beginPath();x.moveTo(cx+s2*(dx+3*k),eY-3*k);x.lineTo(cx+s2*(dx+6*k),eY-5.5*k);x.stroke()}}
+  // fringe of hair under the hood (men)
+  if(v<3){x.fillStyle='#6a4a30';x.beginPath();x.ellipse(cx,(1-.69)*H,30*k,9*k,0,0,7);x.fill()}
+  // beard / moustache
+  const mY=eY+24*k;
+  if(v===1){x.fillStyle='#6a4a30';x.beginPath();x.moveTo(cx-27*k,eY+8*k);x.quadraticCurveTo(cx-26*k,mY+20*k,cx,mY+24*k);x.quadraticCurveTo(cx+26*k,mY+20*k,cx+27*k,eY+8*k);x.quadraticCurveTo(cx+14*k,mY-4*k,cx,mY-6*k);x.quadraticCurveTo(cx-14*k,mY-4*k,cx-27*k,eY+8*k);x.fill();
+   x.fillStyle='#fff';x.beginPath();x.ellipse(cx,mY+1*k,5*k,2.2*k,0,0,7);x.fill()}
+  if(v===2){x.fillStyle='#5a3c26';x.beginPath();x.moveTo(cx,mY-6*k);x.quadraticCurveTo(cx-12*k,mY-8*k,cx-15*k,mY+1*k);x.quadraticCurveTo(cx-8*k,mY-3*k,cx,mY-2*k);x.quadraticCurveTo(cx+8*k,mY-3*k,cx+15*k,mY+1*k);x.quadraticCurveTo(cx+12*k,mY-8*k,cx,mY-6*k);x.fill()}
+  // mouth: a small smile
+  if(v!==1){x.strokeStyle=v===3?'#9a4a40':'#6a3a2a';x.lineWidth=2.4*k;x.beginPath();x.moveTo(cx-8*k,mY+(v===2?2:-1)*k);x.quadraticCurveTo(cx,mY+(v===2?7:6)*k,cx+8*k,mY+(v===2?2:-1)*k);x.stroke()}
+ }
+ const tex=new THREE.CanvasTexture(cv);tex.colorSpace=THREE.SRGBColorSpace;tex.anisotropy=4;
+ const fMat=()=>{const m=new THREE.MeshToonMaterial({gradientMap:GRAD});m.onBeforeCompile=sh=>{sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>\nattribute vec4 fixc;').replace('#include <color_vertex>','#include <color_vertex>\nvColor.xyz=mix(vColor.xyz,fixc.rgb,fixc.a);')};m.customProgramCacheKey=()=>'pplfix';return m};
+ const headMat=new THREE.MeshToonMaterial({gradientMap:GRAD,map:tex});headMat.onBeforeCompile=sh=>{sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>\nattribute float faceV;').replace('#include <uv_vertex>','#include <uv_vertex>\n#ifdef USE_MAP\nvMapUv.x+=faceV*.25;\n#endif')};headMat.customProgramCacheKey=()=>'pplface';
+ const clothMat=()=>new THREE.MeshToonMaterial({gradientMap:GRAD,side:THREE.DoubleSide});
+ // guards: sword in its scabbard (hilt at the origin, blade pointing down) and a bow for the back
+ const sword=M([fix(T(new THREE.CylinderGeometry(.024,.03,.74,6),0,-.43,0),()=>['#3a2618',1]),fix(T(new THREE.SphereGeometry(1,6,4),0,-.8,0,.03,.03,.03),()=>['#b8b8b0',1]),
+  fix(T(new THREE.BoxGeometry(.2,.028,.045),0,-.04,0),()=>['#b8b8b0',1]),fix(T(new THREE.CylinderGeometry(.017,.017,.11,6),0,.03,0),()=>['#4a2f1c',1]),fix(T(new THREE.SphereGeometry(1,6,4),0,.1,0,.032,.032,.032),()=>['#c9a442',1])]);
+ // crossbow for the back: stock along y, prod across the top bulging forward, string, stirrup
+ const prod=new THREE.TorusGeometry(.38,.022,5,12,1.8);prod.rotateZ(Math.PI/2-.9);prod.translate(0,-.02,0);
+ const bow=M([fix(T(new THREE.BoxGeometry(.055,.72,.05),0,-.02,0),()=>['#7a5232',1]),fix(prod,()=>['#5a4a3a',1]),
+  fix(new THREE.CylinderGeometry(.006,.006,.6,3).rotateZ(Math.PI/2).translate(0,.215,0),()=>['#e8e0c8',1]),fix(T(new THREE.TorusGeometry(.055,.012,4,8),0,.41,0),()=>['#8a8a84',1]),
+  fix(T(new THREE.BoxGeometry(.03,.08,.03),0,-.12,.04),()=>['#3a2a1e',1])]);
+ const BR=new THREE.Matrix4().makeRotationZ(.5);
+ return{body,arm,leg,head,hood,veil,faceV,fMat,headMat,clothMat,sword,bow,BR}})();
+const BODYG=PPL.body;
+const PM={legL:pm(PPL.leg,PPL.fMat()),legR:pm(PPL.leg,PPL.fMat()),body:pm(BODYG,PPL.fMat()),head:pm(PPL.head,PPL.headMat),hood:pm(PPL.hood,PPL.clothMat()),veil:pm(PPL.veil,PPL.clothMat()),armL:pm(PPL.arm,PPL.fMat()),armR:pm(PPL.arm,PPL.fMat()),sword:pm(PPL.sword,PPL.fMat()),bow:pm(PPL.bow,PPL.fMat()),tool:pm(BOX,std('#6a5038')),load:pm(BOX,pMat())};
 /* animals */
 function animalGeo(parts){const gs=parts.map(([sx,sy,sz,x,y,z])=>{const g=BOX.clone();g.scale(sx,sy,sz);g.translate(x,y,z);return g.toNonIndexed()});return mergeGeometries(gs)}
 const legs=(bx,bz,len,w)=>[[w,len,w,bx,len/2,bz],[w,len,w,bx,len/2,-bz],[w,len,w,-bx,len/2,bz],[w,len,w,-bx,len/2,-bz]];
@@ -1695,7 +1758,7 @@ function poseFor(p,t){const w=p.mode==='walk';const ph=t*7*(p.run?1.4:1)+p.ph;le
 function updateInstances(t){
  let i=0;const vis=[];
  for(const p of P){if(i>=NP)break;
-  if(colorsDirty){PM.legL.setColorAt(i,col.set(p.legs));PM.legR.setColorAt(i,col.set(p.legs));PM.body.setColorAt(i,col.set(p.tunic));PM.head.setColorAt(i,col.set('#e8c4a0').offsetHSL(0,0,(p.ph%1-.5)*.12));PM.hood.setColorAt(i,col.set(p.hood));PM.armL.setColorAt(i,col.set(p.tunic).multiplyScalar(.92));PM.armR.setColorAt(i,col.set(p.tunic).multiplyScalar(.92));PM.load.setColorAt(i,col.set('#c9b48a'));PM.tool.setColorAt(i,col.set('#ffffff'))}
+  if(colorsDirty){PM.legL.setColorAt(i,col.set(p.legs));PM.legR.setColorAt(i,col.set(p.legs));PM.body.setColorAt(i,col.set(p.tunic));PM.head.setColorAt(i,col.set('#e8c4a0').offsetHSL(0,0,(p.ph%1-.5)*.12));PM.sword.setColorAt(i,col.set('#ffffff'));PM.bow.setColorAt(i,col.set('#ffffff'));PM.hood.setColorAt(i,col.set(p.hood));PM.veil.setColorAt(i,col.set(p.hood));PPL.faceV.array[i]=p.sex==='f'?3:p.child?0:Math.floor(Math.abs(p.ph||0)*977)%3;PPL.faceV.needsUpdate=true;PM.armL.setColorAt(i,col.set(p.tunic).multiplyScalar(.92));PM.armR.setColorAt(i,col.set(p.tunic).multiplyScalar(.92));PM.load.setColorAt(i,col.set('#c9b48a'));PM.tool.setColorAt(i,col.set('#ffffff'))}
   if(p.inside){for(const k in PM)PM[k].setMatrixAt(i,ZERO);i++;continue}
   let x=p.x,z=p.z,h=p.h;
   if(p.plough&&PLOUGH){const pl=PLOUGH;if(p.plough==='man'){x=pl.x-pl.dir*2.4;z=pl.z;h=pl.dir>0?Math.PI/2:-Math.PI/2}else{x=pl.x+pl.dir*6;z=pl.z+1.6;h=pl.dir>0?Math.PI/2:-Math.PI/2}p.x=x;p.z=z;p.mode='walk'}
@@ -1709,15 +1772,15 @@ function updateInstances(t){
   M1.copy(M0);T_(M1,.1,.78,0);RX(M1,ps.legR);T_(M1,0,-.38,0);S_(M1,.13,.76,.14);PM.legR.setMatrixAt(i,fem&&!p.child?ZERO:M1);
   M1.copy(UP);if(fem&&!p.child){T_(M1,0,.86,0);S_(M1,.36,1.3,.32)}else{T_(M1,0,1.14,0);S_(M1,.3,.76,.26)}PM.body.setMatrixAt(i,M1);
   M1.copy(UP);T_(M1,0,1.68,0);S_(M1,.15,.16,.15);PM.head.setMatrixAt(i,M1);
-  M1.copy(UP);T_(M1,0,1.79,-.02);S_(M1,.18,.22,.18);PM.hood.setMatrixAt(i,M1);
-  M1.copy(UP);T_(M1,-.27,1.46,0);RX(M1,ps.aL);T_(M1,0,-.29,0);S_(M1,.1,.58,.11);PM.armL.setMatrixAt(i,M1);
-  M1.copy(UP);T_(M1,.27,1.46,0);RX(M1,ps.aR);T_(M1,0,-.29,0);S_(M1,.1,.58,.11);PM.armR.setMatrixAt(i,M1);
-  if(p.tool){M1.copy(UP);T_(M1,.27,1.46,0);RX(M1,ps.aR);T_(M1,0,-.56,0);RX(M1,(ps.tool||0)-1.4);T_(M1,0,p.tool*.45,0);S_(M1,.05,p.tool,.05);PM.tool.setMatrixAt(i,M1)}else PM.tool.setMatrixAt(i,ZERO);
+  M1.copy(UP);T_(M1,0,1.68,0);S_(M1,.15,.16,.15);const veiled=fem&&!p.child;PM.hood.setMatrixAt(i,veiled?ZERO:M1);PM.veil.setMatrixAt(i,veiled?M1:ZERO);
+  M1.copy(UP);T_(M1,fem&&!p.child?-.25:-.215,1.45,0);RX(M1,ps.aL);T_(M1,0,-.29,0);S_(M1,.1,.58,.11);PM.armL.setMatrixAt(i,M1);
+  M1.copy(UP);T_(M1,fem&&!p.child?.25:.215,1.45,0);RX(M1,ps.aR);T_(M1,0,-.29,0);S_(M1,.1,.58,.11);PM.armR.setMatrixAt(i,M1);
+  if(p.tool&&p.role!=="guard"){M1.copy(UP);T_(M1,fem&&!p.child?.25:.215,1.45,0);RX(M1,ps.aR);T_(M1,0,-.56,0);RX(M1,(ps.tool||0)-1.4);T_(M1,0,p.tool*.45,0);S_(M1,.05,p.tool,.05);PM.tool.setMatrixAt(i,M1)}else PM.tool.setMatrixAt(i,ZERO);if(p.role==="guard"){M1.copy(UP);T_(M1,-.2,.98,.07);RX(M1,.38);PM.sword.setMatrixAt(i,M1);if(p.id%2===0){M1.copy(UP);T_(M1,0,1.18,-.2);M1.multiply(PPL.BR);PM.bow.setMatrixAt(i,M1)}else PM.bow.setMatrixAt(i,ZERO)}else{PM.sword.setMatrixAt(i,ZERO);PM.bow.setMatrixAt(i,ZERO)}
   const carry=p.loop&&p.loop.carry&&p.mode==='walk'?p.loop.carry:null;
   if(carry){M1.copy(UP);if(carry==='sack'||carry==='faggot'||carry==='sheaf'){T_(M1,.15,1.62,-.18);S_(M1,carry==='faggot'?.9:.45,.4,carry==='faggot'?.35:.4)}else if(carry==='bucket'){T_(M1,.32,.85,0);S_(M1,.28,.3,.28)}else if(carry==='stone'){T_(M1,0,1.15,.35);S_(M1,.5,.35,.35)}else{T_(M1,0,1.25,.35);S_(M1,.4,.12,.3)}PM.load.setMatrixAt(i,M1)}else PM.load.setMatrixAt(i,ZERO);
   if(carry)PM.load.setColorAt(i,col.set({bucket:'#6a5038',sack:'#d9cfb4',faggot:'#6b5236',sheaf:'#c9a442',stone:'#c4bba8',dish:'#9a8a70'}[carry]||'#c9b48a'));
   i++}
- for(;i<NP;i++)for(const k in PM)PM[k].setMatrixAt(i,ZERO);
+ const usedN=i;for(;i<NP;i++)for(const k in PM)PM[k].setMatrixAt(i,ZERO);for(const k in PM)PM[k].count=Math.max(1,usedN);
  for(const k in PM){PM[k].instanceMatrix.needsUpdate=true;if(PM[k].instanceColor)PM[k].instanceColor.needsUpdate=true}
  colorsDirty=false;
  // animals
