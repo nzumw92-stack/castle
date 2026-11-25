@@ -42,7 +42,10 @@ function commentEvents(p, c) {
 }
 
 const errors = {};
-const dailyRun = now.getUTCHours() === 3 && now.getUTCMinutes() < 30;
+// the full Instagram check runs once a day (the collector now runs every 10 minutes, so a time window could hit several times or be missed)
+const DAILY = join(ROOT, 'data/daily.json');
+const lastFull = existsSync(DAILY) ? JSON.parse(readFileSync(DAILY, 'utf8')).lastFull : null;
+const dailyRun = !lastFull || now - Date.parse(lastFull) > 23.5 * 36e5;
 
 if (process.env.YT_API_KEY) {
   try {
@@ -69,6 +72,7 @@ if (process.env.IG_TOKEN) {
       for (const j of active.values())
         if (j.ref && !(await commentExists(tok, j.ref))) add({ t: nowIso, type: 'gone', p: 'ig', who: j.who, ref: j.ref });
     }
+    if (dailyRun) writeFileSync(DAILY, JSON.stringify({ lastFull: nowIso }) + '\n');
   } catch (e) { errors.ig = e.message; }
 } else errors.ig = 'IG_TOKEN missing';
 
