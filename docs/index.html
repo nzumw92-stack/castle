@@ -236,6 +236,14 @@ a.btn.home:hover{background:#4a3828}
 .wrap .foot .flinks a:hover{background:var(--ink);color:var(--vhi)}
 .wrap .foot .flinks a.fhome{background:var(--ink);color:var(--vhi)}
 @media (max-width:760px){.wrap .foot{display:none}}
+.vlinks{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.vlinks a{display:inline-flex;align-items:center;gap:5px;min-height:32px;padding:4px 12px;border-radius:999px;font-size:13px;font-weight:600;text-decoration:none;color:#fff;border:1.5px solid var(--ink);box-shadow:0 2px 0 rgba(46,34,25,.35);white-space:nowrap}
+.vlinks a.vyt{background:#b5361f}.vlinks a.vig{background:#7a3f8f}
+.vlinks a:hover{filter:brightness(1.1)}
+a.yt,a.ig{text-decoration:none;cursor:pointer}a.yt:hover,a.ig:hover{text-decoration:underline}
+.stage #ctrlPanel a.btn.soc{text-decoration:none;display:inline-flex;align-items:center;font-weight:600}
+.stage #ctrlPanel a.btn.soc.syt{color:#b5361f}.stage #ctrlPanel a.btn.soc.sig{color:#7a3f8f}
+.find .fx{background:none;color:var(--ink);font-size:22px;line-height:1;padding:0 6px;border:0;cursor:pointer}
 /* public page: the castle fills the screen */
 html,body{margin:0;padding:0;height:100dvh;overflow:hidden}
 .wrap{max-width:none;height:100dvh;gap:0}
@@ -261,7 +269,7 @@ html:not(.fok) .hud{visibility:hidden}
     <div class="panel title">
      <strong id="ttl">The Castle</strong>
      <span class="sub" id="phase"></span>
-     <div class="stats"><span><b id="popn">0</b> people</span><span class="yt" id="ytn"></span><span class="ig" id="ign"></span><span id="indoors"></span></div>
+     <div class="stats"><span><b id="popn">0</b> people</span><a class="yt" id="ytn" href="https://www.youtube.com/channel/UCADrxi5hgPgvbiYQM_nCAIA" target="_blank" rel="noopener" title="Hardly Dark Ages on YouTube"></a><a class="ig" id="ign" href="https://www.instagram.com/hardlydarkages/" target="_blank" rel="noopener" title="@hardlydarkages on Instagram"></a><span id="indoors"></span></div>
      <div class="stats" id="bld"></div>
      <div class="stats vote" id="vote"></div>
      <div class="mrow"><button class="btn" id="voteT" type="button" aria-expanded="false" aria-controls="vote" onclick="const v=document.getElementById('vote');v.classList.toggle('open');const o=v.classList.contains('open');this.setAttribute('aria-expanded',o);this.querySelector('i').textContent=o?'▴':'▾'">Vote <i>▾</i></button><button class="btn" type="button" onclick="document.querySelector('#chron button').click()">Chronicle</button><button class="btn" type="button" aria-controls="find" onclick="const f=document.getElementById('find');f.classList.toggle('open');if(f.classList.contains('open'))document.getElementById('findin').focus()">Find me</button></div>
@@ -269,6 +277,7 @@ html:not(.fok) .hud{visibility:hidden}
     <button class="btn menu" id="menuBtn" type="button" aria-expanded="false" aria-controls="ctrlPanel" onclick="const c=document.getElementById('ctrlPanel');c.classList.toggle('open');this.setAttribute('aria-expanded',c.classList.contains('open'))">☰ Menu</button>
     <div class="panel ctrl" id="ctrlPanel">
      <div class="row"><a class="btn home" href="https://hardlydarkages.com" target="_blank" rel="noopener">🏠 Go to hardlydarkages.com</a></div>
+     <div class="row"><a class="btn soc syt" href="https://www.youtube.com/channel/UCADrxi5hgPgvbiYQM_nCAIA" target="_blank" rel="noopener">▶ YouTube</a><a class="btn soc sig" href="https://www.instagram.com/hardlydarkages/" target="_blank" rel="noopener">◎ Instagram</a></div>
      <div class="row"><button class="btn" type="button" onclick="openIntro()">What is this castle?</button><button class="btn" type="button" onclick="openShelf()">🧱 Toys &amp; books</button></div>
      <div class="row" id="chron"></div>
      <div class="row" id="times"></div>
@@ -277,7 +286,7 @@ html:not(.fok) .hud{visibility:hidden}
     </div>
    </div>
    <div class="hud now panel" id="now"></div>
-   <form class="hud find panel" id="find"><input id="findin" list="names" placeholder="Find me: your Instagram name" aria-label="Find a resident"><datalist id="names"></datalist><button>Find</button></form>
+   <form class="hud find panel" id="find"><input id="findin" list="names" placeholder="Find me: your Instagram name" aria-label="Find a resident"><datalist id="names"></datalist><button>Find</button><button type="button" class="fx" aria-label="Close" onclick="this.form.classList.remove('open')">×</button></form>
    <div class="hud panel card" id="card" hidden></div>
    <div class="intro" id="shelf" hidden role="dialog" aria-modal="true" aria-labelledby="shelfH"><div class="ibox panel">
     <button class="x" type="button" aria-label="Close" data-close>×</button>
@@ -2073,7 +2082,7 @@ function renderState(){const s=STATE;if(!s)return;
  const nm=id=>CARDS2[id]?CARDS2[id].name:id;
  $('bld').innerHTML=(s.buildings||[]).filter(b=>b.state==='building').map(b=>`<span>Building: ${esc(nm(b.id))} <span class="bar"><i style="width:${Math.round((b.progress||0)*100)}%"></i></span> ${b.stones}/${b.need} stones</span>`).join('')||'<span>No building site right now</span>';
  const v=s.vote;if(v){const cl=new Date(v.closes).toLocaleString('en-GB',{weekday:'short',hour:'2-digit',minute:'2-digit'});
-  $('vote').innerHTML=`<span>${v.kind==='name'?'Vote: name the castle':'Vote: what to build next'}</span>${v.options.map(o=>`<span class="opt"><b>!${o.key}</b> ${esc(v.kind==='name'?o.id:nm(o.id))} · ${o.votes}</span>`).join('')}<span class="k">Comment on YouTube or Instagram · closes ${cl}</span>`}else $('vote').innerHTML='';if($('voteT'))$('voteT').hidden=!$('vote').innerHTML;
+  $('vote').innerHTML=`<span>${v.kind==='name'?'Vote: name the castle':'Vote: what to build next'}</span>${v.options.map(o=>`<span class="opt"><b>!${o.key}</b> ${esc(v.kind==='name'?o.id:nm(o.id))} · ${o.votes}</span>`).join('')}<span class="k">Comment the letter under any video or reel · closes ${cl}</span><span class="vlinks"><a class="vyt" href="https://www.youtube.com/shorts/gYtEcCvUQNw" target="_blank" rel="noopener">▶ Vote on YouTube</a><a class="vig" href="https://www.instagram.com/hardlydarkages/" target="_blank" rel="noopener">◎ Vote on Instagram</a></span>`}else $('vote').innerHTML='';if($('voteT'))$('voteT').hidden=!$('vote').innerHTML;
  if(s.stale&&Object.keys(s.stale).length)$('vote').insertAdjacentHTML('beforeend','<span class="k">Some numbers are delayed.</span>')}
 function showChronicle(){const L=(STATE&&STATE.chronicle)||[];cardShell(`<span class="era">Chronicle</span><h3>What happened</h3><ul class="chron">${L.map(c=>`<li><span class="wk">Week ${c.week} · ${new Date(c.t).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</span><br>${esc(c.text)}</li>`).join('')||'<li>Nothing yet.</li>'}</ul>`)}
 btns($('chron'),[['c','Chronicle']],()=>false,()=>showChronicle());
