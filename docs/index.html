@@ -151,6 +151,11 @@ h1{font-size:clamp(30px,5vw,46px)}
 .ibox .ilinks a{color:var(--lapis)}
 .ibox .x{position:absolute;right:10px;top:8px;border:0;background:none;font-size:24px;line-height:1;cursor:pointer;color:var(--ink);padding:4px 8px}
 @media (max-width:520px){.ibox{padding:16px 16px 14px}.ibox h2{font-size:26px}.ibox .ilead{font-size:15px}.ibox li{font-size:14px}}
+.marks{position:absolute;inset:0;z-index:2;pointer-events:none;overflow:hidden}
+.mark{position:absolute;left:0;top:0;font:600 12.5px/1.2 var(--text);color:var(--ink);background:var(--vhi);border:1.3px solid var(--ink);border-radius:999px;padding:2px 9px;white-space:nowrap;pointer-events:auto;cursor:pointer;box-shadow:0 2px 6px rgba(30,20,10,.25);transition:opacity .25s}
+.mark::after{content:"";position:absolute;left:calc(50% - .65px);bottom:-6px;width:1.3px;height:6px;background:var(--ink)}
+.mark.site{background:#f6e3b4}
+.mark:hover{background:var(--ink);color:var(--vhi)}
 /* public page: the castle fills the screen */
 html,body{margin:0;padding:0;height:100dvh;overflow:hidden}
 .wrap{max-width:none;height:100dvh;gap:0}
@@ -204,6 +209,7 @@ html:not(.fok) .hud{visibility:hidden}
      <li><b>Vote</b> on what gets built next: comment <code>!A</code>, <code>!B</code> or <code>!C</code> under any video. A new vote opens every Sunday.</li>
      <li><b>Your name on a house?</b> Comment <code>!join</code> on Instagram, then use “Find me”.</li>
      <li><b>Updates every 30 minutes:</b> new residents, stones and votes show up at the next count, so don't worry if nothing moves right away.</li>
+     <li><b>Got an idea?</b> Tell us in the comments what the townsfolk should do or what should happen next. We read the top comments and build in the best ideas, if they fit.</li>
      <li><b>Explore:</b> zoom in, watch people at work and tap a building. Every one tells a real piece of medieval history, with sources. Day and night follow your own clock.</li>
     </ul>
     <button class="igo" type="button" data-close>Enter the castle</button>
@@ -1064,6 +1070,13 @@ function siteWork(p,id){const b=GB[id];p.site=id;p.act='build';
  else{const L=LODGE&&isBuilt('lodge')&&Math.hypot(LODGE.x-fx,LODGE.z-fz)<90?[LODGE.x,LODGE.z+3]:[fx+(R()-.5)*12,fz+8];setLoop(p,[L,[fx,fz]],3,'idle','stone')}}
 const TOWNJ={weaver:['craft','spin'],shoemaker:['craft','hammer'],tailor:['craft','spin'],cooper:['craft','hammer'],potter:['craft','stir'],butcher:['craft','chop'],turner:['craft','brush'],dyer:['craft','stir'],furrier:['craft','bend'],ropemaker:['craft','bend'],saddler:['craft','hammer'],merchant:['market','talk'],maid:['water','idle'],carrier:['carry','idle']};
 let THM=null;const CRAFTN=new Map();const THOF=h=>{if(!THM){THM=new Map();for(const t of TOWNH)if(t.hi!=null)THM.set(t.hi,t)}return THM.get(HOUSES.indexOf(h))};
+function homeChore(p,h,i){const hi=HOUSES.indexOf(h),tf=hi>=0&&hi<TOFTS.length?TOFTS[hi]:null,k=(i*7+(h.occ.length||0))%6;
+ const side=[h.door[0]+Math.cos(h.ry)*3.2,h.door[1]-Math.sin(h.ry)*3.2];
+ if(tf&&k<2){setWander(p,tf.x,tf.z,3,k===0?'dig':'bend');p.act=k===0?'garden':'hens';return}
+ if(k===2){const[x,z]=near(side[0],side[1],1.2);setStay(p,x,z,h.ry+Math.PI/2,'chop');p.act='wood';return}
+ if(k===3){const W=h.town!=null&&typeof TOWNWELL!=='undefined'?TOWNWELL:WELL2;setLoop(p,[[h.door[0],h.door[1]],[W[0]+(R()-.5)*3,W[1]+(R()-.5)*3]],4,'idle','bucket');p.act='water';return}
+ if(k===4){p.indoorsAlways=true;p.act='hearth';return}
+ const[x,z]=near(h.door[0],h.door[1],2);setStay(p,x,z,h.ry,p.sex==='f'?'spin':'hammer');p.act=p.sex==='f'?'spin':'mend'}
 function buildPeopleGame(){P.length=0;colorsDirty=colorsDirtyA=true;CRAFTN.clear();ANIMALS.length=0;for(const h of HOUSES)h.occ=[];if(CART)CART.visible=false;
  const res=STATE?STATE.residents||[]:[];const sites=GIDS.filter(id=>stOf(id)==='scaffold');const HO=houseOrder();let workers=0;
  res.forEach((r,i)=>{const job=r.job||'peasant';const guard=GUARDJ.has(job),cler=CLERGYJ.has(job);
@@ -1088,7 +1101,7 @@ function buildPeopleGame(){P.length=0;colorsDirty=colorsDirtyA=true;CRAFTN.clear
   if(isBuilt('fields')){const ks=[0,1,2].filter(k=>fieldOn(FIELDS[k]));const k=ks[i%ks.length],bl=FBL(k),b=bl[Math.floor(R()*bl.length)],nov=MONTH==='nov';p.act='fields';
    if(i%9===4&&BARNS[k]){setLoop(p,[[b[0],b[1]],BARNS[k]],6,'idle',nov?'sack':'sheaf');return}
    setWander(p,b[0]+(R()-.5)*(b[2]-9),b[1]+(R()-.5)*(b[3]-9),3,nov?(R()<.55?'dig':'bend'):(R()<.6?'reap':'bend'));return}
-  if(h){const[x,z]=near(h.door[0],h.door[1],2);setStay(p,x,z,h.ry,p.sex==='f'?'spin':'idle');p.act='home';return}
+  if(h){homeChore(p,h,i);return}
   setWander(p,GREEN[0],GREEN[1],12,'idle');p.act='green'});
  const add=(type,n,cx,cz,rad,color,rz)=>{for(let i=0;i<n;i++)ANIMALS.push({type,x:cx+(R()-.5)*rad*2,z:cz+(R()-.5)*(rz||rad)*2,h:R()*6,cx,cz,rad,rz,t:R()*5,tx:null,tz:null,col:color?color():null})};
  add('goose',6,GREEN[0],GREEN[1],12,()=>'#f0ece2');add('deer',4,-96,-62,14,()=>pick(['#9a6a3e','#8a5c34','#a5764a']));add('fox',1,-70,36,26,()=>'#c4642a');add('pig',6,-140,-112,28,()=>pick(['#3a2a20','#4a3424','#2e241d']));
@@ -1098,7 +1111,7 @@ function buildPeopleGame(){P.length=0;colorsDirty=colorsDirtyA=true;CRAFTN.clear
  if(isBuilt('henhouse'))add('hen',6,-10,6,3.5,()=>pick(['#8a5a30','#e8e0cc']));
  for(const k of HO.slice(0,12)){if(!isBuilt('house'+k))continue;const t=TOFTS[k];if(t)add('hen',2,t.x,t.z,3,()=>pick(['#8a5a30','#a06a3a','#e8e0cc']))}}
 const JOBTXT={weaver:'Weaver',shoemaker:'Shoemaker',tailor:'Tailor',cooper:'Cooper',potter:'Potter',butcher:'Butcher',turner:'Wood turner',dyer:'Dyer',furrier:'Furrier',ropemaker:'Ropemaker',saddler:'Saddler',merchant:'Merchant',maid:'Household servant',carrier:'Carrier',peasant:'Peasant',cottar:'Cottar, a smallholder',labourer:'Labourer',carpenter:'Carpenter',watchman:'Watchman',castellan:'Castellan',steward:'Steward',servant:'Servant','water carrier':'Water carrier',chaplain:'Chaplain',cook:'Cook',scullion:'Kitchen hand','pit cleaner':'Privy cleaner',ploughman:'Ploughman','field warden':'Field warden','parish priest':'Parish priest','tithe-taker':'Tithe collector',miller:'Miller',smith:'Smith',groom:'Groom',carter:'Carter',brewster:'Brewer','grut-mistress':'Grut maker',baker:'Baker',fisher:'Fisher',mason:'Mason',guard:'Guard','tower watchman':'Tower watchman',gatekeeper:'Gatekeeper',crossbowman:'Crossbowman',chapman:'Trader','market reeve':'Market overseer',bathman:'Bath keeper','hospital brother':'Hospital brother','hospital sister':'Hospital sister',tanner:'Tanner','town clerk':'Town clerk','ditch-digger':'Ditch digger'};
-function doingTxt(p){if(p.act==='craft')return'Working in the workshop at the front of the house.';if(p.act==='craftin')return'Working inside the workshop.';if(p.act==='busyin')return'Busy in the house or the shop.';if(p.act==='market')return'Trading at the market.';if(p.act==='errand')return'Fetching water from the well.';if(p.act==='carry')return'Carrying goods through town.';if(p.act==='build')return'Working on the building site: '+CARDS2[p.site].name+'.';if(p.act==='watch')return'On watch.';if(p.act==='fields')return'Working in the fields.';if(p.act==='home')return'Busy at home.';if(p.act==='green')return'Out on the village green.';const at=JOBAT[p.job];return at&&CARDS2[at]?'At work: '+CARDS2[at].name+'.':''}
+function doingTxt(p){if(p.act==='craft')return'Working in the workshop at the front of the house.';if(p.act==='craftin')return'Working inside the workshop.';if(p.act==='busyin')return'Busy in the house or the shop.';if(p.act==='market')return'Trading at the market.';if(p.act==='errand')return'Fetching water from the well.';if(p.act==='carry')return'Carrying goods through town.';if(p.act==='build')return'Working on the building site: '+CARDS2[p.site].name+'.';if(p.act==='watch')return'On watch.';if(p.act==='fields')return'Working in the fields.';if(p.act==='home')return'Busy at home.';if(p.act==='garden')return'Digging the kitchen garden behind the house.';if(p.act==='hens')return'Feeding the hens and the pig.';if(p.act==='wood')return'Chopping firewood.';if(p.act==='water')return'Fetching water from the well.';if(p.act==='hearth')return'Inside, cooking and keeping the fire going.';if(p.act==='spin')return'Spinning yarn by the door.';if(p.act==='mend')return'Mending tools by the house.';if(p.act==='green')return'Out on the village green.';const at=JOBAT[p.job];return at&&CARDS2[at]?'At work: '+CARDS2[at].name+'.':''}
 /* ================= trees (instanced) ================= */
 const ROOFM=new Set([MAT.pond,MAT.thatch,MAT.thatch2,MAT.thatch3,MAT.thatchD,MAT.shingle,MAT.slate,MAT.tile,MAT.tile2,MAT.glow,MAT.green]);
 const KEEPM=new Set([MAT.timber,MAT.fence]);
@@ -1724,9 +1737,46 @@ stage.addEventListener('pointerleave',()=>{active=false;controls.enableZoom=fals
 let down=null;
 renderer.domElement.addEventListener('pointerup',e=>{if(!down)return;if(Math.hypot(e.clientX-down[0],e.clientY-down[1])<6)doPick(e);down=null});
 const ray=new THREE.Raycaster(),ndc=new THREE.Vector2(),pv=new THREE.Vector3();
+const pvA=new THREE.Vector3(),pvB=new THREE.Vector3();
+function personAt(mx,my,r){let best=null,bs=1e9;const W=r.width,Hh=r.height;
+ for(const p of P){if(p.inside)continue;const y0=p.y||0;pvA.set(p.x,y0+.1,p.z).project(camera);if(pvA.z>1||pvA.z<-1)continue;
+  const ax=(pvA.x*.5+.5)*W,ay=(-pvA.y*.5+.5)*Hh;if(Math.abs(ax-mx)>90||Math.abs(ay-my)>260)continue;
+  pvB.set(p.x,y0+1.75*(p.scale||1),p.z).project(camera);const bx=(pvB.x*.5+.5)*W,by=(-pvB.y*.5+.5)*Hh;
+  const dx=bx-ax,dy=by-ay,L2=dx*dx+dy*dy||1,t=Math.max(0,Math.min(1,((mx-ax)*dx+(my-ay)*dy)/L2)),d=Math.hypot(ax+dx*t-mx,ay+dy*t-my);
+  const tol=Math.max(18,Math.sqrt(L2)*.35);if(d<tol){const sc=d/tol;if(sc<bs){bs=sc;best=p}}}
+ return best}
+function pickables(){return PICK.filter(o=>!(o.userData.gid&&stOf(o.userData.gid)==='none')&&(o.userData.stage||0)<=STAGE&&!(o.userData.pali&&STAGE!==1)&&!(o.userData.village&&BIG))}
+/* hover: hand cursor + gold ring under the person */
+let hovP=null,hovT=0,hovE=null;
+const RING=new THREE.Mesh(new THREE.RingGeometry(.55,.82,28),new THREE.MeshBasicMaterial({color:0xf2c845,transparent:true,opacity:.95,depthTest:false}));RING.rotation.x=-Math.PI/2;RING.renderOrder=999;RING.visible=false;scene.add(RING);
+renderer.domElement.addEventListener('pointermove',e=>{hovE=e.pointerType==='mouse'&&!e.buttons?e:null;if(!hovE){hovP=null;RING.visible=false}});
+renderer.domElement.addEventListener('pointerleave',()=>{hovE=null;hovP=null;RING.visible=false;renderer.domElement.style.cursor=''});
+function updHover(){const now=performance.now();
+ if(hovE&&now-hovT>90){hovT=now;const r=renderer.domElement.getBoundingClientRect(),mx=hovE.clientX-r.left,my=hovE.clientY-r.top;hovP=personAt(mx,my,r);let on=!!hovP;
+  if(!on){ndc.set(mx/r.width*2-1,-(my/r.height)*2+1);ray.setFromCamera(ndc,camera);on=ray.intersectObjects(pickables(),false).length>0}
+  renderer.domElement.style.cursor=on?'pointer':''}
+ RING.visible=!!hovP&&!hovP.inside;if(RING.visible){RING.scale.setScalar(hovP.scale||1);RING.position.set(hovP.x,(hovP.y||0)+.08,hovP.z)}}
+/* landmark name tags */
+let MARKS=null,MARKSON=true;const MK={},pvM=new THREE.Vector3();let mkN=0;
+function markAnchor(id){const f=GB[id]&&GB[id].feet;if(!f||!f.length)return null;let x=0,z=0,a=0,top=-1e9;for(const q of f){const w=Math.max(1,q.sx*q.sz);x+=q.x*w;z+=q.z*w;a+=w;top=Math.max(top,q.y+q.sy/2)}x/=a;z/=a;const g=G(x,z);return[x,Math.min(Math.max(top,g+2),g+(stOf(id)==='scaffold'?5:30))+1.2,z]}
+function updMarks(){if(!MARKS){MARKS=document.createElement('div');MARKS.className='marks';renderer.domElement.parentElement.appendChild(MARKS)}
+ if(mkN++%2)return;const r=renderer.domElement.getBoundingClientRect(),W=r.width,Hh=r.height,cand=[];
+ for(const id of GIDS){const st=stOf(id),on=MARKSON&&(st==='built'||st==='scaffold');let m=MK[id];
+  if(!on){if(m)m.el.style.display='none';continue}
+  if(!m||m.n!==(GB[id]?GB[id].feet.length:0)||m.st!==st){if(!m){const el=document.createElement('button');el.type='button';el.className='mark';el.onclick=ev=>{ev.stopPropagation();const o=PICK.find(o=>o.userData.gid===id)||PICK.find(o=>o.userData.id===id);showBuilding(o?o.userData:{id})};
+    el.addEventListener('pointerdown',ev=>ev.stopPropagation());el.addEventListener('pointerup',ev=>ev.stopPropagation());MARKS.appendChild(el);m=MK[id]={el}}
+   m.a=markAnchor(id);m.n=GB[id]?GB[id].feet.length:0;m.st=st;m.el.textContent=(st==='scaffold'?'⚒ ':'')+CARDS2[id].name;m.el.classList.toggle('site',st==='scaffold');m.w=0}
+  if(!m.a){m.el.style.display='none';continue}
+  pvM.set(...m.a);const d=camera.position.distanceTo(pvM);pvM.project(camera);
+  if(pvM.z>1||Math.abs(pvM.x)>1.05||Math.abs(pvM.y)>1.05||d>430){m.el.style.display='none';continue}
+  cand.push({m,d,x:(pvM.x*.5+.5)*W,y:(-pvM.y*.5+.5)*Hh})}
+ cand.sort((a,b)=>a.d-b.d);const placed=[];
+ for(const c of cand){const m=c.m;if(m.el.style.display==='none')m.el.style.display='';if(!m.w)m.w=m.el.offsetWidth||80;const w=m.w,h=24,box=[c.x-w/2,c.y-h-6,c.x+w/2,c.y];
+  if(placed.some(b=>b[0]<box[2]&&box[0]<b[2]&&b[1]<box[3]&&box[1]<b[3])){m.el.style.display='none';continue}
+  placed.push(box);m.el.style.transform='translate('+(c.x-w/2).toFixed(1)+'px,'+(c.y-h-6).toFixed(1)+'px)';m.el.style.opacity=Math.max(0,Math.min(1,(430-c.d)/110)).toFixed(2)}}
 function doPick(e){const r=renderer.domElement.getBoundingClientRect();const mx=e.clientX-r.left,my=e.clientY-r.top;
  {const H=HARDLY;pv.set(H.x,H.g.position.y+1.6,H.z).project(camera);if(pv.z<1&&Math.hypot((pv.x*.5+.5)*r.width-mx,(-pv.y*.5+.5)*r.height-my)<26){showHardly();return}}
- let best=null,bd=16;for(const p of P){if(p.inside)continue;pv.set(p.x,(p.y||0)+1.2*p.scale,p.z).project(camera);if(pv.z>1)continue;const sx=(pv.x*.5+.5)*r.width,sy=(-pv.y*.5+.5)*r.height;const d=Math.hypot(sx-mx,sy-my);if(d<bd){bd=d;best=p}}
+ const best=personAt(mx,my,r);
  if(best){showPerson(best);return}
  ndc.set(mx/r.width*2-1,-(my/r.height)*2+1);ray.setFromCamera(ndc,camera);const hits=ray.intersectObjects(PICK.filter(o=>!(o.userData.gid&&stOf(o.userData.gid)==='none')&&(o.userData.stage||0)<=STAGE&&!(o.userData.pali&&STAGE!==1)&&!(o.userData.village&&BIG)),false);
  if(hits.length){const small=hits.map(h=>h.object).sort((a,b)=>a.scale.x*a.scale.z-b.scale.x*b.scale.z);const o=hits[0].object.userData.id==='woods'||/Field|motte/.test(hits[0].object.userData.id)?small[0]:hits[0].object;showBuilding(o.userData)}}
@@ -1827,7 +1877,7 @@ function renderHUDDemo(force){const h=curHour;const work=workHours(h);$('indoors
  $('now').querySelectorAll('.chip').forEach(b=>b.onclick=()=>{if(b.dataset.k==='chron'){chronicleView();return}const s=SPOTS[b.dataset.k];flyTo(s[0],s[1],s[2])})}
 function btns(el,items,isOn,onClick){el.innerHTML='';for(const[k,l]of items){const b=document.createElement('button');b.className='btn';b.textContent=l;b.setAttribute('aria-pressed',isOn(k));b.onclick=()=>{onClick(k);btns(el,items,isOn,onClick)};el.appendChild(b)}}
 btns($('times'),[['auto','Your time'],[9,'Morning'],[12,'Noon'],[16,'Dusk'],[22,'Night']],k=>k==='auto'?hourMode==='auto':hourMode==='fixed'&&fixedHour===k,k=>{if(k==='auto')hourMode='auto';else{hourMode='fixed';fixedHour=k;if(MONTH==='aug'&&k===16)fixedHour=20.2}placeAll();renderHUD(true)});
-btns($('fx'),[['fx','Effects'],['wood','Woodcut']],k=>k==='fx'?FX:WOOD,k=>{if(k==='fx')FX=!FX;else{WOOD=!WOOD;inkPass.uniforms.wood.value=WOOD?1:0;inkPass.uniforms.lw.value=Math.max(1,renderer.getPixelRatio()*(WOOD?1.4:1.1))}});
+btns($('fx'),[['fx','Effects'],['wood','Woodcut'],['marks','Names']],k=>k==='fx'?FX:k==='marks'?MARKSON:WOOD,k=>{if(k==='marks'){MARKSON=!MARKSON;return}if(k==='fx')FX=!FX;else{WOOD=!WOOD;inkPass.uniforms.wood.value=WOOD?1:0;inkPass.uniforms.lw.value=Math.max(1,renderer.getPixelRatio()*(WOOD?1.4:1.1))}});
 function setPop(n){POP=n;STAGE=n>=5000?2:n>1000?1:0;BIG=STAGE>=1;CITY=STAGE===2;townGroup.visible=BIG;paliGroup.visible=STAGE===1;cityGroup.visible=CITY;villageGroup.visible=!BIG;PADMODE={stage:STAGE,city:BIG};
  if(flagMeshes[0])flagMeshes[0].position.y=FLAGS[0][1]+(CITY?11.6:0);
  $('popn').textContent=n.toLocaleString('en-GB');$('ytn').textContent='▶ '+['112','1,240','3,710'][STAGE];$('ign').textContent='◎ '+['68','760','2,290'][STAGE];
@@ -1875,7 +1925,7 @@ function frame(){timer.update();const dt=Math.min(.05,timer.getDelta());T+=dt;
  const dist=camera.position.distanceTo(controls.target);scene.fog.near=Math.max(330,dist*1.1);scene.fog.far=Math.max(820,dist*3);const ts=FX?Math.max(0,Math.min(1,(dist-170)/260)):0;const r=renderer.domElement;tH.uniforms.h.value=ts/r.clientWidth;tV.uniforms.v.value=ts/r.clientHeight;tH.enabled=tV.enabled=FX&&!WOOD;
  renderer.shadowMap.enabled=true;
  updateLabels();hudT+=dt;if(hudT>1){hudT=0;renderHUD()}
- inkPass.uniforms.hatch.value=L.day?1:.4;renderNormals();composer.render(dt);requestAnimationFrame(frame)}
+ inkPass.uniforms.hatch.value=L.day?1:.4;renderNormals();updHover();updMarks();composer.render(dt);requestAnimationFrame(frame)}
 /* ================= build preview panel (test only) ================= */
 const GAMEIDS=['motte','bailey','moat','hall','well','chapel','kitchen','garderobe','fields','church','watermill','smithy','stables','brewhouse','henhouse','bakehouse','fishpond','curtain','keep','gatehouse','towers','market','barn','bathhouse','hospital','tannery','windmill','townhall'];
 const DE={motte:'Turmhügel',bailey:'Vorburg',moat:'Graben',hall:'Palas',well:'Brunnen',chapel:'Kapelle',kitchen:'Küche',garderobe:'Aborterker',fields:'Felder',church:'Kirche',watermill:'Wassermühle',smithy:'Schmiede',stables:'Stall',brewhouse:'Brauhaus',henhouse:'Hühnerhof',bakehouse:'Backhaus',fishpond:'Fischweiher',curtain:'Ringmauer',keep:'Bergfried',gatehouse:'Torturm',towers:'Mauertürme',market:'Markt',barn:'Zehntscheune',bathhouse:'Badstube',hospital:'Spital',tannery:'Gerberei',windmill:'Windmühle',townhall:'Rathaus'};
