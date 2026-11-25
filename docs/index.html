@@ -248,7 +248,7 @@ html,body{margin:0;padding:0;height:100dvh;overflow:hidden}
 .page{border:0;border-radius:0;box-shadow:none;flex:1;display:flex;flex-direction:column;min-height:0}
 .stage{flex:1;height:auto;min-height:0}
 .foot{border-top:1.5px solid var(--ink);padding:6px max(14px,env(safe-area-inset-left,0px)) max(6px,env(safe-area-inset-bottom,0px))}
-.foot a{color:var(--lapis)}.stage #ctrlPanel a.legal{font-size:12px;color:var(--muted);text-decoration:underline}
+.foot a{color:var(--lapis)}.wrap .foot .fnote a.flegal{color:var(--muted);font-size:11px;white-space:nowrap}
 html:not(.fok) .hud{visibility:hidden}
 .foot{font-size:12px}.now .k{font-size:12px}
 .ht{display:none}@media (pointer:coarse){.hm{display:none}.ht{display:inline}}
@@ -276,12 +276,11 @@ html:not(.fok) .hud{visibility:hidden}
     <div class="panel ctrl" id="ctrlPanel">
      <div class="row"><a class="btn home" href="https://hardlydarkages.com" target="_blank" rel="noopener">🏠 Go to hardlydarkages.com</a></div>
      <div class="row"><a class="btn soc syt" href="https://www.youtube.com/channel/UCADrxi5hgPgvbiYQM_nCAIA" target="_blank" rel="noopener">▶ YouTube</a><a class="btn soc sig" href="https://www.instagram.com/hardlydarkages/" target="_blank" rel="noopener">◎ Instagram</a></div>
-     <div class="row"><a class="legal" href="https://hardlydarkages.com/privacy/">Imprint &amp; privacy</a></div>
      <div class="row"><button class="btn" type="button" onclick="openIntro()">What is this castle?</button><button class="btn" type="button" onclick="openShelf()">🧱 Toys &amp; books</button></div>
      <div class="row" id="chron"></div>
      <div class="row" id="times"></div>
           <div class="row" id="fx"></div>
-     <p class="mfoot">Numbers come from YouTube and Instagram, calculated by Hardly Dark Ages. Named residents joined on Instagram with !join. <a href="https://hardlydarkages.com">hardlydarkages.com</a></p>
+     <p class="mfoot">Numbers come from YouTube and Instagram, calculated by Hardly Dark Ages. Named residents joined on Instagram with !join. <a href="https://hardlydarkages.com">hardlydarkages.com</a> · <a href="https://hardlydarkages.com/privacy/">Imprint &amp; privacy</a></p>
     </div>
    </div>
    <div class="hud now panel" id="now"></div>
@@ -347,12 +346,12 @@ html:not(.fok) .hud{visibility:hidden}
     if(!seen)openIntro()})()</script>
    <div class="hint" id="hint"><span class="hm">Drag to move · right-drag to turn · click people and buildings</span><span class="ht">Drag to move · two fingers to turn and zoom · tap people and buildings</span></div>
   </div>
-  <div class="foot"><span class="fnote">Castle numbers are calculated by Hardly Dark Ages from YouTube and Instagram data. Residents shown with a name joined on Instagram with !join; everyone else lives here under a medieval name.</span><nav class="flinks"><a href="#" onclick="openIntro();return false">What is this?</a><a href="#" onclick="openShelf();return false">🧱 Toys &amp; books</a><a href="https://hardlydarkages.com/privacy/">Imprint &amp; privacy</a><a class="fhome" href="https://hardlydarkages.com">🏠 hardlydarkages.com</a></nav></div>
+  <div class="foot"><span class="fnote">Castle numbers are calculated by Hardly Dark Ages from YouTube and Instagram data. Residents shown with a name joined on Instagram with !join; everyone else lives here under a medieval name. <a class="flegal" href="https://hardlydarkages.com/privacy/">Imprint &amp; privacy</a></span><nav class="flinks"><a href="#" onclick="openIntro();return false">What is this?</a><a href="#" onclick="openShelf();return false">🧱 Toys &amp; books</a><a class="fhome" href="https://hardlydarkages.com">🏠 hardlydarkages.com</a></nav></div>
  </div>
 
 
 
-<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.186.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.186.0/examples/jsm/","three/examples/jsm/":"https://cdn.jsdelivr.net/npm/three@0.186.0/examples/jsm/","postprocessing":"https://cdn.jsdelivr.net/npm/three@0.186.0/examples/jsm/postprocessing/Pass.js","n8ao":"https://cdn.jsdelivr.net/npm/n8ao@2.0.1/dist/N8AO.js"}}</script>
+<script type="importmap">{"imports":{"three":"./lib/three/build/three.module.js","three/addons/":"./lib/three/examples/jsm/","three/examples/jsm/":"./lib/three/examples/jsm/","postprocessing":"./lib/three/examples/jsm/postprocessing/Pass.js","n8ao":"./lib/n8ao/N8AO.js"}}</script>
 <script type="module">
 await new Promise(r=>{requestAnimationFrame(()=>setTimeout(r,0));setTimeout(r,120)});
 const yieldUI=()=>new Promise(r=>setTimeout(r,0));
@@ -1650,7 +1649,7 @@ const PPL=(()=>{const lo=lowEnd,L=c=>new THREE.Color(c);
   if(v!==1){x.strokeStyle=v===3?'#9a4a40':'#6a3a2a';x.lineWidth=2.4*k;x.beginPath();x.moveTo(cx-8*k,mY+(v===2?2:-1)*k);x.quadraticCurveTo(cx,mY+(v===2?7:6)*k,cx+8*k,mY+(v===2?2:-1)*k);x.stroke()}
  }
  const tex=new THREE.CanvasTexture(cv);tex.colorSpace=THREE.SRGBColorSpace;tex.anisotropy=4;
- const fMat=()=>{const m=new THREE.MeshToonMaterial({gradientMap:GRAD});m.onBeforeCompile=sh=>{sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>\nattribute vec4 fixc;').replace('#include <color_vertex>','#include <color_vertex>\nvColor.xyz=mix(vColor.xyz,fixc.rgb,fixc.a);')};m.customProgramCacheKey=()=>'pplfix';return m};
+ const fMat=()=>{const m=new THREE.MeshToonMaterial({gradientMap:GRAD});m.onBeforeCompile=sh=>{sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>\nattribute vec4 fixc;').replace('#include <color_vertex>','#include <color_vertex>\n#ifdef USE_INSTANCING_COLOR\nvColor.xyz=mix(vColor.xyz,fixc.rgb,fixc.a);\n#endif')};m.customProgramCacheKey=()=>'pplfix';return m};
  const headMat=new THREE.MeshToonMaterial({gradientMap:GRAD,map:tex});headMat.onBeforeCompile=sh=>{sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>\nattribute float faceV;').replace('#include <uv_vertex>','#include <uv_vertex>\n#ifdef USE_MAP\nvMapUv.x+=faceV*.25;\n#endif')};headMat.customProgramCacheKey=()=>'pplface';
  const clothMat=()=>new THREE.MeshToonMaterial({gradientMap:GRAD,side:THREE.DoubleSide});
  // guards: sword in its scabbard (hilt at the origin, blade pointing down) and a bow for the back
