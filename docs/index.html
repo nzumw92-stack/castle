@@ -135,6 +135,22 @@ h1{font-size:clamp(30px,5vw,46px)}
 .card details.src a{color:inherit}
 .card .more{display:inline-block;margin-top:6px;font-weight:600}.card .chron{list-style:none;padding:0;margin:6px 0 0}.card .chron li{margin:0 0 7px}.card .chron .wk{font-size:12px;color:var(--muted)}
 .vote .opt{white-space:nowrap}.vote .k{font-size:12px;color:var(--muted)}
+.intro{position:absolute;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(46,34,25,.42)}
+.intro[hidden]{display:none}
+.ibox{position:relative;width:100%;max-width:460px;max-height:calc(100% - 8px);overflow:auto;padding:20px 22px 18px;box-sizing:border-box;color:var(--ink);font-family:var(--text)}
+.ibox h2{font-family:var(--display);font-weight:400;font-size:30px;line-height:1.1;margin:0 0 4px}
+.ibox .ikick{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0}
+.ibox .ilead{font-size:15.5px;line-height:1.45;margin:10px 0 12px}
+.ibox ul{list-style:none;margin:0 0 14px;padding:0;display:flex;flex-direction:column;gap:8px}
+.ibox li{font-size:14.5px;line-height:1.4;padding-left:12px;border-left:3px solid var(--rule)}
+.ibox li b{color:var(--verm)}
+.ibox code{font-family:inherit;font-weight:700;color:var(--ig)}
+.ibox .igo{font:inherit;font-size:16px;font-weight:600;width:100%;padding:10px 14px;border-radius:999px;border:1.5px solid var(--ink);background:var(--ink);color:var(--vhi);cursor:pointer}
+.ibox .igo:hover{background:#4a3828}
+.ibox .ilinks{margin:12px 0 0;font-size:13px;text-align:center;color:var(--muted)}
+.ibox .ilinks a{color:var(--lapis)}
+.ibox .x{position:absolute;right:10px;top:8px;border:0;background:none;font-size:24px;line-height:1;cursor:pointer;color:var(--ink);padding:4px 8px}
+@media (max-width:520px){.ibox{padding:16px 16px 14px}.ibox h2{font-size:26px}.ibox .ilead{font-size:15px}.ibox li{font-size:14px}}
 /* public page: the castle fills the screen */
 html,body{margin:0;padding:0;height:100dvh;overflow:hidden}
 .wrap{max-width:none;height:100dvh;gap:0}
@@ -167,6 +183,7 @@ html:not(.fok) .hud{visibility:hidden}
     </div>
     <button class="btn menu" id="menuBtn" type="button" aria-expanded="false" aria-controls="ctrlPanel" onclick="const c=document.getElementById('ctrlPanel');c.classList.toggle('open');this.setAttribute('aria-expanded',c.classList.contains('open'))">☰ Menu</button>
     <div class="panel ctrl" id="ctrlPanel">
+     <div class="row"><button class="btn" type="button" onclick="openIntro()">What is this castle?</button></div>
      <div class="row" id="chron"></div>
      <div class="row" id="times"></div>
           <div class="row" id="fx"></div>
@@ -176,9 +193,31 @@ html:not(.fok) .hud{visibility:hidden}
    <div class="hud now panel" id="now"></div>
    <form class="hud find panel" id="find"><input id="findin" list="names" placeholder="Find me: your Instagram name" aria-label="Find a resident"><datalist id="names"></datalist><button>Find</button></form>
    <div class="hud panel card" id="card" hidden></div>
+   <div class="intro" id="intro" hidden role="dialog" aria-modal="true" aria-labelledby="introH"><div class="ibox panel">
+    <button class="x" type="button" aria-label="Close" data-close>×</button>
+    <p class="ikick">Hardly Dark Ages</p>
+    <h2 id="introH">Welcome to the Castle</h2>
+    <p class="ilead">A medieval town that grows with the Hardly Dark Ages community. Every follower on YouTube and Instagram lives here, so the town is only as big as the channel.</p>
+    <ul>
+     <li><b>Follow</b> and you move in. A new house goes up for every five residents.</li>
+     <li><b>Comment</b> on any video or reel and your comment becomes a stone for the building site (up to three a day).</li>
+     <li><b>Vote</b> on what gets built next: comment <code>!A</code>, <code>!B</code> or <code>!C</code> under any video. A new vote opens every Sunday.</li>
+     <li><b>Your name on a house?</b> Comment <code>!join</code> on Instagram, then use “Find me”.</li>
+     <li><b>Explore:</b> zoom in, watch people at work and tap a building. Every one tells a real piece of medieval history, with sources. Day and night follow your own clock.</li>
+    </ul>
+    <button class="igo" type="button" data-close>Enter the castle</button>
+    <p class="ilinks"><a href="https://www.youtube.com/channel/UCADrxi5hgPgvbiYQM_nCAIA" target="_blank" rel="noopener">YouTube</a> · <a href="https://www.instagram.com/hardlydarkages/" target="_blank" rel="noopener">Instagram</a> · <a href="https://hardlydarkages.com" target="_blank" rel="noopener">hardlydarkages.com</a></p>
+   </div></div>
+   <script>(function(){var el=document.getElementById('intro'),K='hda-intro-seen';
+    function close(){el.hidden=true;try{localStorage.setItem(K,'1')}catch(e){}}
+    window.openIntro=function(){el.hidden=false;var b=el.querySelector('.igo');if(b)b.focus()};
+    el.addEventListener('click',function(e){if(e.target===el||e.target.hasAttribute('data-close'))close()});
+    document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!el.hidden)close()});
+    var seen=false;try{seen=localStorage.getItem(K)==='1'}catch(e){}
+    if(!seen)openIntro()})()</script>
    <div class="hint" id="hint"><span class="hm">Drag to move · right-drag to turn · click people and buildings</span><span class="ht">Drag to move · two fingers to turn and zoom · tap people and buildings</span></div>
   </div>
-  <div class="foot">Castle numbers are calculated by Hardly Dark Ages from YouTube and Instagram data. Residents shown with a name joined on Instagram with !join; everyone else lives here under a medieval name. · <a href="https://hardlydarkages.com">hardlydarkages.com</a></div>
+  <div class="foot">Castle numbers are calculated by Hardly Dark Ages from YouTube and Instagram data. Residents shown with a name joined on Instagram with !join; everyone else lives here under a medieval name. · <a href="#" onclick="openIntro();return false">What is this?</a> · <a href="https://hardlydarkages.com">hardlydarkages.com</a></div>
  </div>
 
 
@@ -1875,7 +1914,7 @@ function applyState(s){STATE=s;const want={};for(const id of GIDS)want[id]=['non
  renderState();renderHUD(true);const ld=document.getElementById('loading');if(ld)ld.remove()}
 let lastUpd=null;
 async function loadState(){for(const u of['state.json','https://castle.hardlydarkages.com/state.json']){try{const r=await fetch(u+'?t='+Date.now(),{cache:'no-store'});if(!r.ok)continue;const j=await r.json();if(j&&j.version)return j}catch(e){}}return null}
-const SNAPSHOT={"updated":"2026-11-24T18:26:00Z","version":1,"seed":1066,"started":true,"start":"2026-11-24T16:30:00Z","castle":{"name":null,"phase":2},"population":{"total":25,"youtube":16,"instagram":9,"named":1},"stones":{"stock":0,"thisWeek":1,"total":1},"buildings":[{"id":"motte","state":"building","started":"2026-11-24T16:30:00Z","week":1,"stones":1,"need":15,"progress":0.04,"readyAt":null},{"id":"bailey","state":"queued"}],"vote":{"id":"w1","kind":"name","opens":"2026-11-24T16:30:00Z","closes":"2026-11-29T18:00:00Z","options":[{"key":"A","id":"Hardlington","votes":1},{"key":"B","id":"Castle Nottoodark","votes":0},{"key":"C","id":"Little Mudbury","votes":0}]},"history":[],"residents":[{"id":"nce535cff","name":"tiltmate","p":"ig","job":"peasant","home":"h1","since":"2026-11-24"},{"id":"a0","name":null,"anon":"Elisabeth zum Brunnen","sex":"f","job":"peasant","home":"h1"},{"id":"a1","name":null,"anon":"Dietrich zur Mühle","sex":"m","job":"peasant","home":"h1"},{"id":"a2","name":null,"anon":"Peter Lederer","sex":"m","job":"cottar","home":"h1"},{"id":"a3","name":null,"anon":"Wigand Seiler","sex":"m","job":"peasant","home":"h1"},{"id":"a4","name":null,"anon":"Hugo zur Mühle","sex":"m","job":"peasant","home":"h2"},{"id":"a5","name":null,"anon":"Berthold Sporer","sex":"m","job":"peasant","home":"h2"},{"id":"a6","name":null,"anon":"Wigand am Weg","sex":"m","job":"cottar","home":"h2"},{"id":"a7","name":null,"anon":"Albrecht am Berg","sex":"m","job":"peasant","home":"h2"},{"id":"a8","name":null,"anon":"Otto am Berg","sex":"m","job":"peasant","home":"h2"},{"id":"a9","name":null,"anon":"Gertrud am Weg","sex":"f","job":"peasant","home":"h3"},{"id":"a10","name":null,"anon":"Heinrich Metzger","sex":"m","job":"cottar","home":"h3"},{"id":"a11","name":null,"anon":"Otto Weber","sex":"m","job":"peasant","home":"h3"},{"id":"a12","name":null,"anon":"Eberhard Wirt","sex":"m","job":"peasant","home":"h3"},{"id":"a13","name":null,"anon":"Heinrich vom Bach","sex":"m","job":"peasant","home":"h3"},{"id":"a14","name":null,"anon":"Ulrich am Graben","sex":"m","job":"cottar","home":"h4"},{"id":"a15","name":null,"anon":"Elisabeth Seilerin","sex":"f","job":"peasant","home":"h4"},{"id":"a16","name":null,"anon":"Richenza vom Bach","sex":"f","job":"peasant","home":"h4"},{"id":"a17","name":null,"anon":"Friedrich Metzger","sex":"m","job":"peasant","home":"h4"},{"id":"a18","name":null,"anon":"Gisela Kellerin","sex":"f","job":"cottar","home":"h4"},{"id":"a19","name":null,"anon":"Johannes Lederer","sex":"m","job":"peasant","home":"h5"},{"id":"a20","name":null,"anon":"Friedrich Krämer","sex":"m","job":"peasant","home":"h5"},{"id":"a21","name":null,"anon":"Agnes im Hof","sex":"f","job":"peasant","home":"h5"},{"id":"a22","name":null,"anon":"Albrecht am Graben","sex":"m","job":"cottar","home":"h5"},{"id":"a23","name":null,"anon":"Adelheid am Graben","sex":"f","job":"peasant","home":"h5"}],"chronicle":[{"t":"2026-11-24T16:30:00Z","week":1,"text":"Sir Hardly plants his banner. Work begins on the motte."}],"stale":{}};
+const SNAPSHOT={"updated":"2026-11-24T19:38:04Z","version":1,"seed":1066,"started":true,"start":"2026-11-24T16:30:00Z","castle":{"name":null,"phase":2},"population":{"total":25,"youtube":16,"instagram":9,"named":1},"stones":{"stock":0,"thisWeek":1,"total":1},"buildings":[{"id":"motte","state":"building","started":"2026-11-24T16:30:00Z","week":1,"stones":1,"need":15,"progress":0.07,"readyAt":null},{"id":"bailey","state":"queued"}],"vote":{"id":"w1","kind":"name","opens":"2026-11-24T16:30:00Z","closes":"2026-11-29T18:00:00Z","options":[{"key":"A","id":"Hardlington","votes":1},{"key":"B","id":"Castle Nottoodark","votes":0},{"key":"C","id":"Little Mudbury","votes":0}]},"history":[],"residents":[{"id":"nce535cff","name":"tiltmate","p":"ig","job":"peasant","home":"h1","since":"2026-11-24"},{"id":"a0","name":null,"anon":"Elisabeth zum Brunnen","sex":"f","job":"peasant","home":"h1"},{"id":"a1","name":null,"anon":"Dietrich zur Mühle","sex":"m","job":"peasant","home":"h1"},{"id":"a2","name":null,"anon":"Peter Lederer","sex":"m","job":"cottar","home":"h1"},{"id":"a3","name":null,"anon":"Wigand Seiler","sex":"m","job":"peasant","home":"h1"},{"id":"a4","name":null,"anon":"Hugo zur Mühle","sex":"m","job":"peasant","home":"h2"},{"id":"a5","name":null,"anon":"Berthold Sporer","sex":"m","job":"peasant","home":"h2"},{"id":"a6","name":null,"anon":"Wigand am Weg","sex":"m","job":"cottar","home":"h2"},{"id":"a7","name":null,"anon":"Albrecht am Berg","sex":"m","job":"peasant","home":"h2"},{"id":"a8","name":null,"anon":"Otto am Berg","sex":"m","job":"peasant","home":"h2"},{"id":"a9","name":null,"anon":"Gertrud am Weg","sex":"f","job":"peasant","home":"h3"},{"id":"a10","name":null,"anon":"Heinrich Metzger","sex":"m","job":"cottar","home":"h3"},{"id":"a11","name":null,"anon":"Otto Weber","sex":"m","job":"peasant","home":"h3"},{"id":"a12","name":null,"anon":"Eberhard Wirt","sex":"m","job":"peasant","home":"h3"},{"id":"a13","name":null,"anon":"Heinrich vom Bach","sex":"m","job":"peasant","home":"h3"},{"id":"a14","name":null,"anon":"Ulrich am Graben","sex":"m","job":"cottar","home":"h4"},{"id":"a15","name":null,"anon":"Elisabeth Seilerin","sex":"f","job":"peasant","home":"h4"},{"id":"a16","name":null,"anon":"Richenza vom Bach","sex":"f","job":"peasant","home":"h4"},{"id":"a17","name":null,"anon":"Friedrich Metzger","sex":"m","job":"peasant","home":"h4"},{"id":"a18","name":null,"anon":"Gisela Kellerin","sex":"f","job":"cottar","home":"h4"},{"id":"a19","name":null,"anon":"Johannes Lederer","sex":"m","job":"peasant","home":"h5"},{"id":"a20","name":null,"anon":"Friedrich Krämer","sex":"m","job":"peasant","home":"h5"},{"id":"a21","name":null,"anon":"Agnes im Hof","sex":"f","job":"peasant","home":"h5"},{"id":"a22","name":null,"anon":"Albrecht am Graben","sex":"m","job":"cottar","home":"h5"},{"id":"a23","name":null,"anon":"Adelheid am Graben","sex":"f","job":"peasant","home":"h5"}],"chronicle":[{"t":"2026-11-24T16:30:00Z","week":1,"text":"Sir Hardly plants his banner. Work begins on the motte."}],"stale":{}};
 async function poll(){let j=await loadState();if(!j&&SNAPSHOT&&!lastUpd){j=SNAPSHOT;setTimeout(()=>{const k=document.querySelector('#now .k');if(k)k.insertAdjacentText('beforeend',' · offline copy from '+new Date(SNAPSHOT.updated).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}))},50)}if(!j){const ld=document.getElementById('loading');if(ld)ld.textContent='The castle could not be loaded. Please try again later.';return}if(j.updated!==lastUpd){lastUpd=j.updated;applyState(j)}}
 if(TESTMODE)window.BPV.applyState=applyState;
 poll();if(!TESTMODE){setInterval(poll,5*60e3);document.addEventListener('visibilitychange',()=>{if(!document.hidden)poll()})}
