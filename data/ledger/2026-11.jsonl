@@ -13,3 +13,6 @@
 {"t":"2026-11-24T16:36:25Z","type":"comment","p":"yt","who":"h:11be896893a73c5b","cid":"h:90380f690044bff9","ok":false,"cmd":"vote","arg":"A"}
 {"t":"2026-11-25T14:44:27Z","type":"followers","yt":16,"ig":11}
 {"t":"2026-11-25T18:03:59Z","type":"comment","p":"yt","who":"h:7138976c9ed41610","cid":"h:f5d57f0080d05717","ok":true}
+{"t":"2026-11-25T18:43:04Z","type":"comment","p":"ig","who":"h:5372c093664322f7","cid":"h:e650596de477b509","ok":true,"cmd":"join"}
+{"t":"2026-11-25T18:43:04Z","type":"join","p":"ig","who":"h:5372c093664322f7","name":"nzumw_","cid":"h:e650596de477b509","ref":"18150485320565141"}
+{"t":"2026-11-25T18:52:10Z","type":"followers","yt":16,"ig":13}
