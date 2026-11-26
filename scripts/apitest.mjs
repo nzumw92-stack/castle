@@ -53,6 +53,14 @@ else {
     const withC = m.data.find(x => x.comments_count > 0);
     if (withC) { const c = await get(`${G}/${withC.id}/comments?fields=id,timestamp&access_token=${IG}`); out('comments readable', err(c) || `yes (${c.data.length} on one post)`); }
     else out('comments readable', 'no post with comments to test');
+    // per post: count Instagram shows vs. comments+replies the API returns (no text, no names)
+    const m2 = await get(`${G}/${u.id}/media?fields=id,timestamp,media_product_type,permalink,comments_count&limit=15&access_token=${IG}`);
+    for (const x of m2.data || []) {
+      const c = await get(`${G}/${x.id}/comments?fields=id,timestamp,hidden,replies{id,timestamp}&limit=50&access_token=${IG}`);
+      const list = c.data || []; const replies = list.reduce((n, y) => n + (y.replies?.data?.length || 0), 0);
+      const newest = list.map(y => y.timestamp).sort().pop() || '-';
+      out(`${(x.permalink || '').split('/').filter(Boolean).pop()} ${x.media_product_type}`, err(c) || `count ${x.comments_count} · api ${list.length}+${replies} replies · hidden ${list.filter(y => y.hidden).length} · newest ${newest}`);
+    }
     break;
   }
 }
