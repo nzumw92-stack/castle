@@ -11,7 +11,7 @@ concurrency:
 jobs:
   collect:
     runs-on: ubuntu-latest
-    timeout-minutes: 65
+    timeout-minutes: 350
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
@@ -20,7 +20,8 @@ jobs:
       - name: Tests
         run: node --test
       # GitHub starts scheduled runs late or skips them (in practice every 70-90 min).
-      # So each run collects 6 times, 10 minutes apart, and the next run takes over.
+      # So each run keeps collecting every 10 minutes for up to 5.5 hours; the next scheduled run
+      # waits in the queue (concurrency group) and takes over right away, so there is no gap.
       - name: Collect every 10 minutes
         id: run
         run: |
@@ -28,7 +29,9 @@ jobs:
           git config user.name "castle-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           rc=0
-          for round in 1 2 3 4 5 6; do
+          start=$(date +%s); round=0
+          while :; do
+            round=$((round+1))
             git pull --rebase -q
             node collector/run.mjs || rc=1
             git add data docs/state.json
@@ -38,7 +41,8 @@ jobs:
               ok=0; for i in 1 2 3; do git pull --rebase -q && git push -q && { ok=1; break; }; sleep 5; done
               [ $ok = 1 ] || rc=1
             fi
-            [ $round = 6 ] || sleep 600
+            [ $(( $(date +%s) - start )) -ge 19200 ] && break
+            sleep 600
           done
           echo "rc=$rc" >> "$GITHUB_OUTPUT"
         env:
