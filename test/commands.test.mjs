@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { parseCommand, longEnough, nameAllowed } from '../collector/commands.mjs';
+import { parseCommand, commandSet, longEnough, nameAllowed } from '../collector/commands.mjs';
 
 test('parses votes, join and leave', () => {
   assert.deepEqual(parseCommand('!A'), { cmd: 'vote', arg: 'A' });
@@ -28,4 +28,11 @@ test('stone length and name filter', () => {
   assert.equal(nameAllowed('agnes_bakes', blocked), true);
   assert.equal(nameAllowed('Spammer1', blocked), false);
   assert.equal(nameAllowed('xNAZIx', blocked), false);
+});
+test('a vote and !join in one comment both count', () => {
+  assert.deepEqual(parseCommand('!A !Join'), { cmd: 'vote', arg: 'A' });
+  assert.deepEqual([...commandSet('!A !Join')].sort(), ['a', 'join']);
+  assert.ok(commandSet('!A !join').has('join'));
+  assert.ok(!commandSet('hello!join').has('join'));
+  assert.equal(commandSet('').size, 0);
 });

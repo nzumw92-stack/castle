@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { fetchYouTube } from './youtube.mjs';
 import { fetchInstagram, commentExists } from './instagram.mjs';
-import { parseCommand, longEnough, nameAllowed } from './commands.mjs';
+import { parseCommand, commandSet, longEnough, nameAllowed } from './commands.mjs';
 import { loadLedger, appendEvents, keyOf } from './ledger.mjs';
 import { makeHasher } from './hash.mjs';
 import { computeState } from '../engine/rules.mjs';
@@ -36,9 +36,10 @@ function commentEvents(p, c) {
   const who = hash(p, c.author), cid = hash(p, c.id);
   const cmd = parseCommand(c.text);
   add({ t: c.t, type: 'comment', p, who, cid, ok: longEnough(c.text), ...(cmd && cmd) });
-  if (p !== 'ig' || !cmd) return;
-  if (cmd.cmd === 'join' && nameAllowed(c.username, blocked)) add({ t: c.t, type: 'join', p, who, name: c.username, cid, ref: c.id });
-  if (cmd.cmd === 'leave') add({ t: c.t, type: 'leave', p, who, cid });
+  if (p !== 'ig') return;
+  const cmds = commandSet(c.text);   // "!A !join" votes AND moves in
+  if (cmds.has('leave')) add({ t: c.t, type: 'leave', p, who, cid });
+  else if (cmds.has('join') && nameAllowed(c.username, blocked)) add({ t: c.t, type: 'join', p, who, name: c.username, cid, ref: c.id });
 }
 
 const errors = {};

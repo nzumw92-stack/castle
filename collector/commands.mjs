@@ -1,6 +1,13 @@
 // Finds castle commands in a comment. The first command in the text wins.
 const RE = /(?:^|[^\w!])!(join|leave|vote|[abc])(?![\w])(?:[ \t]+([a-z][\w-]{1,30}))?/i;
 
+// All command words in a comment (so "!A !join" both votes and moves in).
+export function commandSet(text) {
+  const re = new RegExp(RE.source, 'gi'), out = new Set(); let m;
+  while ((m = re.exec(String(text || '')))) out.add(m[1].toLowerCase());
+  return out;
+}
+
 export function parseCommand(text) {
   const m = RE.exec(String(text || ''));
   if (!m) return null;
