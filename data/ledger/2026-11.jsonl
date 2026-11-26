@@ -28,3 +28,4 @@
 {"t":"2026-11-25T21:15:08Z","type":"join","p":"ig","who":"h:5372c093664322f7","name":"nzumw_","cid":"h:af9975a4e29f3bfd","ref":"18122299223052415"}
 {"t":"2026-11-26T09:04:14Z","type":"followers","yt":17,"ig":17}
 {"t":"2026-11-26T12:13:45Z","type":"comment","p":"ig","who":"h:ce535cff37952108","cid":"h:9aecbd7f4ade7b30","ok":true,"cmd":"vote","arg":"A"}
+{"t":"2026-11-25T21:23:57Z","type":"comment","p":"yt","who":"h:30535539ccdc06f7","cid":"h:ed590c6c990713df","ok":true,"cmd":"vote","arg":"B"}
