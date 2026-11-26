@@ -30,3 +30,4 @@
 {"t":"2026-11-26T12:13:45Z","type":"comment","p":"ig","who":"h:ce535cff37952108","cid":"h:9aecbd7f4ade7b30","ok":true,"cmd":"vote","arg":"A"}
 {"t":"2026-11-25T21:23:57Z","type":"comment","p":"yt","who":"h:30535539ccdc06f7","cid":"h:ed590c6c990713df","ok":true,"cmd":"vote","arg":"B"}
 {"t":"2026-11-26T13:38:42Z","type":"comment","p":"yt","who":"h:0b04e2c798c0912e","cid":"h:a22f658c9b7882a0","ok":true,"cmd":"vote","arg":"A"}
+{"t":"2026-11-26T15:39:55Z","type":"followers","yt":17,"ig":18}
