@@ -332,7 +332,7 @@ html:not(.fok) .hud{visibility:hidden}
      <li><b>Your name on a house?</b> Comment <code>!join</code> on Instagram, then use “Find me”.</li>
      <li><b>Updates every 10 minutes:</b> new residents, stones and votes show up at the next count, so don't worry if nothing moves right away.</li>
      <li><b>Got an idea?</b> Tell us in the comments what the townsfolk should do or what should happen next. We read the top comments and build in the best ideas, if they fit.</li>
-     <li><b>Explore:</b> zoom in, watch people at work and tap a building. Every one tells a real piece of medieval history, with sources. Day and night follow your own clock.</li>
+     <li><b>Explore:</b> zoom in, watch people at work and tap a building. Every one tells a real piece of medieval history, with sources. Day and night follow your own clock: light from 6:00, dark from 22:00.</li>
     </ul>
     <button class="igo" type="button" data-close>Enter the castle</button>
     <p class="ilinks"><a href="https://www.youtube.com/channel/UCADrxi5hgPgvbiYQM_nCAIA" target="_blank" rel="noopener">YouTube</a> · <a href="https://www.instagram.com/hardlydarkages/" target="_blank" rel="noopener">Instagram</a> · <a href="https://hardlydarkages.com" target="_blank" rel="noopener">hardlydarkages.com</a></p>
@@ -1180,7 +1180,7 @@ let STATE=null,HOUSEORDER=[];
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function houseOrder(){if(!HOUSEORDER.length)HOUSEORDER=HOUSES.map((h,i)=>i).filter(i=>HOUSES[i].town==null).sort((a,b)=>Math.hypot(HOUSES[a].x-20,HOUSES[a].z+28)-Math.hypot(HOUSES[b].x-20,HOUSES[b].z+28)).concat(HOUSES.map((h,i)=>i).filter(i=>HOUSES[i].town!=null));return HOUSEORDER}
 const JOBAT={castellan:'hall',steward:'hall',servant:'hall',cook:'kitchen',scullion:'kitchen',chaplain:'chapel','water carrier':'well','pit cleaner':'garderobe',ploughman:'fields','field warden':'fields','parish priest':'church','tithe-taker':'barn',miller:'watermill',smith:'smithy',groom:'stables',carter:'stables',brewster:'brewhouse','grut-mistress':'brewhouse',baker:'bakehouse',fisher:'fishpond',mason:'curtain',chapman:'market','market reeve':'market',bathman:'bathhouse','hospital brother':'hospital','hospital sister':'hospital',tanner:'tannery','town clerk':'townhall',labourer:'motte',carpenter:'bailey','ditch-digger':'moat'};
-const JOBANIM={smith:'hammer',cook:'stir',scullion:'stir',baker:'stir',brewster:'stir','grut-mistress':'stir',groom:'brush',fisher:'fish',tanner:'bend',bathman:'stir','pit cleaner':'dig','ditch-digger':'dig',labourer:'dig',carpenter:'hammer',mason:'hammer',chapman:'talk','market reeve':'talk','town clerk':'talk',steward:'talk',castellan:'talk','tithe-taker':'talk',ploughman:'dig','hospital brother':'bend','hospital sister':'bend'};
+const JOBANIM={smith:'hammer',cook:'stir',scullion:'stir',baker:'stir',brewster:'stir','grut-mistress':'stir',groom:'brush',fisher:'fish',tanner:'bend',bathman:'stir','pit cleaner':'dig','ditch-digger':'dig',labourer:'dig',carpenter:'hammer',mason:'mason',chapman:'talk','market reeve':'talk','town clerk':'talk',steward:'talk',castellan:'talk','tithe-taker':'talk',ploughman:'dig','hospital brother':'bend','hospital sister':'bend'};
 const GUARDJ=new Set(['watchman','guard','tower watchman','gatekeeper','crossbowman']);
 const CLERGYJ=new Set(['chaplain','parish priest','hospital brother','hospital sister']);
 const isBuilt=id=>stOf(id)==='built';
@@ -1203,7 +1203,7 @@ function siteWork(p,id){const b=GB[id];p.site=id;p.act='build';if(stoneCartFor(p
  if(b.ring){const a=R()*Math.PI*2,r=b.ring[2]-2;const x=b.ring[0]+Math.cos(a)*r,z=b.ring[1]+Math.sin(a)*r;if(R()<.5)setStay(p,x,z,a+Math.PI/2,'dig');else setLoop(p,[[x,z],[b.ring[0]+Math.cos(a+.5)*(r-1.5),b.ring[1]+Math.sin(a+.5)*(r-1.5)]],3,'idle','sack');return}
  const f=b.feet[Math.floor(R()*b.feet.length)];const c=Math.cos(f.ry),s=Math.sin(f.ry),k=f.sz/2+1.4;const fx=f.x+k*s,fz=f.z+k*c;
  if(b.terrain){const[x,z]=near(fx,fz,3);setStay(p,x,z,f.ry+Math.PI,'dig');return}
- if(R()<.55){const[x,z]=near(fx,fz,2.5);setStay(p,x,z,f.ry+Math.PI,'hammer')}
+ if(R()<.55){const[x,z]=near(fx,fz,2.5);{const r2=R(),o=(R()-.5)*Math.max(3,f.sx-2);setStay(p,x+o*c,z-o*s,f.ry+Math.PI,r2<.45?'mason':r2<.75?'saw':'hammer')}}
  else{const L=LODGE&&isBuilt('lodge')&&Math.hypot(LODGE.x-fx,LODGE.z-fz)<90?[LODGE.x,LODGE.z+3]:[fx+(R()-.5)*12,fz+8];setLoop(p,[L,[fx,fz]],3,'idle','stone')}}
 const TOWNJ={weaver:['craft','spin'],shoemaker:['craft','hammer'],tailor:['craft','spin'],cooper:['craft','hammer'],potter:['craft','stir'],butcher:['craft','chop'],turner:['craft','brush'],dyer:['craft','stir'],furrier:['craft','bend'],ropemaker:['craft','bend'],saddler:['craft','hammer'],merchant:['market','talk'],maid:['water','idle'],carrier:['carry','idle']};
 let THM=null;const CRAFTN=new Map();const THOF=h=>{if(!THM){THM=new Map();for(const t of TOWNH)if(t.hi!=null)THM.set(t.hi,t)}return THM.get(HOUSES.indexOf(h))};
@@ -1213,7 +1213,50 @@ function homeChore(p,h,i){const hi=HOUSES.indexOf(h),tf=hi>=0&&hi<TOFTS.length?T
  if(k===2){const[x,z]=near(side[0],side[1],1.2);setStay(p,x,z,h.ry+Math.PI/2,'chop');p.act='wood';return}
  if(k===3){const W=h.town!=null&&typeof TOWNWELL!=='undefined'?TOWNWELL:WELL2;setLoop(p,[[h.door[0],h.door[1]],[W[0]+(R()-.5)*3,W[1]+(R()-.5)*3]],4,'idle','bucket');p.act='water';return}
  if(k===4){p.indoorsAlways=true;p.act='hearth';return}
- const[x,z]=near(h.door[0],h.door[1],2);setStay(p,x,z,h.ry,p.sex==='f'?'spin':'hammer');p.act=p.sex==='f'?'spin':'mend'}
+ const[x,z]=near(h.door[0],h.door[1],2);const W=p.sex==='f'?[['spin','spin'],['sweep','sweep'],['churn','churn'],['wash','laundry']]:[['hammer','mend'],['saw','sawing']];const w=W[(i+hi+7)%W.length];setStay(p,x,z,h.ry,w[0]);p.act=w[1]}
+const fmtH=x=>{const H=Math.floor(x),M=Math.round((x-H)*60);return H+':'+String(M).padStart(2,'0')};
+function lightTxt(h){return h>=SUNRISE&&h<SUNSET?'☀ Light until '+fmtH(SUNSET):'☾ Dark until '+fmtH(SUNRISE)}
+var MERCH=null;
+const MFROM=['Cologne','Nuremberg','Lübeck','Augsburg','Frankfurt','Regensburg','Venice','Flanders','Erfurt'];
+const MWARE=['cloth from Flanders','salt from Lüneburg','pepper and spices','knives and iron goods','wine from the Rhine','furs from the east','needles, pins and glass beads','wax and honey','dyes for the dyers'];
+const MNAME=['Konrad','Heinrich','Ulrich','Berthold','Gottfried','Arnold','Hartmut','Ludwig','Rudolf'];
+function merchSetup(){if(MERCH&&MERCH.g)scene.remove(MERCH.g);MERCH=null;if(!NODES.length)return;
+ const mk=isBuilt('market');const C=mk?MARKET:GREEN;const dest=[C[0]+5,C[1]+4];
+ let st=null,bd=-1;for(const r of ROADS)for(const q of[r[0],r[r.length-1]]){const d=Math.hypot(q[0]-dest[0],q[1]-dest[1]);if(d>bd&&d<380){bd=d;st=q}}
+ if(!st)return;const path=route(st,dest);if(!path||path.length<2)return;
+ const cum=[0];for(let i=1;i<path.length;i++)cum.push(cum[i-1]+Math.hypot(path[i][0]-path[i-1][0],path[i][1]-path[i-1][1]));
+ const p=mkPerson('villager','merchant',{sex:'m',tunic:'#2f5d8a',hood:'#a5742a'});p.merchant=true;p.act='merchant';p.job='merchant';p.home=st;p.inside=true;
+ const g=new THREE.Group();scene.add(g);
+ const horse=new THREE.Mesh(AG.horse,std('#7a5638'));horse.castShadow=true;g.add(horse);
+ const pack=new THREE.Group();horse.add(pack);const cl=std('#c9b48a'),cl2=std('#8a3a2a');
+ for(const sz of[-1,1]){const b=new THREE.Mesh(BOX,cl);b.scale.set(.75,.5,.3);b.position.set(-.1,1.5,sz*.45);b.castShadow=true;pack.add(b)}
+ {const b=new THREE.Mesh(BOX,cl2);b.scale.set(.65,.28,.55);b.position.set(-.1,1.88,0);pack.add(b)}
+ const stall=new THREE.Group();g.add(stall);
+ {const c=new THREE.Mesh(BOX,std('#8a4a34'));c.scale.set(2.2,.04,1.5);c.position.y=.03;c.receiveShadow=true;stall.add(c);
+  const W=[[-.65,.2,-.3,.45,.4,.4,'#c9b48a'],[.1,.16,-.35,.5,.32,.4,'#d9cfb4'],[.7,.25,-.25,.3,.5,.3,'#6a4a30'],[-.4,.08,.35,.6,.12,.4,'#3d6a8a'],[.45,.07,.35,.5,.1,.35,'#b88a3a']];
+  for(const w of W){const m=new THREE.Mesh(BOX,std(w[6]));m.scale.set(w[3],w[4],w[5]);m.position.set(w[0],w[1],w[2]);m.castShadow=true;stall.add(m)}}
+ g.visible=false;
+ const face=Math.atan2(C[0]-dest[0],C[1]-dest[1]);
+ MERCH={p,g,horse,pack,stall,path,cum,len:cum[cum.length-1],dest,face,mk,on:false,ph:'',who:'',doing:'',news:''}}
+function merchAt(d){const M=MERCH,c=M.cum,pa=M.path;d=Math.max(0,Math.min(M.len,d));let i=1;while(i<c.length-1&&c[i]<d)i++;
+ const a=pa[i-1],b=pa[i],k=(d-c[i-1])/Math.max(.001,c[i]-c[i-1]);return[a[0]+(b[0]-a[0])*k,a[1]+(b[1]-a[1])*k,b[0]-a[0],b[1]-a[1]]}
+function merchStep(p,hour){const M=MERCH;if(!M){p.inside=true;return}
+ const day=Math.floor(Date.now()/864e5);const H=Math.floor(hour),m=(hour-H)*60;const tw=Math.min(20,M.len/1.15/60);
+ const vis=x=>x>=8&&x<=20&&(x+day)%2===0;let ph=null,k=0,VH=H;
+ if(vis(H)&&m<40)ph='stall';else if(vis(H)&&m<40+tw){ph='out';k=(m-40)/tw}else if(vis(H+1)&&m>=60-tw){ph='in';k=(m-60+tw)/tw;VH=H+1}
+ if(!ph){p.inside=true;M.g.visible=false;M.on=false;return}
+ const n=(day*7+VH)%MFROM.length,w=(day*5+VH)%MWARE.length,nm=MNAME[(day*3+VH)%MNAME.length];
+ p.name=nm+' of '+MFROM[n];M.who=p.name;const ware=MWARE[w];
+ p.inside=false;M.on=true;M.g.visible=true;M.ph=ph;const place=M.mk?'the market':'the village green';
+ if(ph==='stall'){const fx=Math.sin(M.face),fz=Math.cos(M.face);p.x=M.dest[0];p.z=M.dest[1];p.h=M.face;p.mode='stay';p.anim='talk';p.path=null;
+  M.stall.visible=true;M.stall.position.set(p.x+fx*1.5,G(p.x+fx*1.5,p.z+fz*1.5),p.z+fz*1.5);M.stall.rotation.y=M.face;
+  const hx=p.x-fz*2.6-fx*.8,hz=p.z+fx*2.6-fz*.8;M.horse.position.set(hx,G(hx,hz),hz);M.horse.rotation.y=Math.atan2(-fz,fx);M.pack.visible=false;
+  M.doing='A travelling merchant. Selling '+ware+' at '+place+' until '+VH+':40.';M.news=' '+p.name+', a travelling merchant, sells '+ware+' at '+place+'.'}
+ else{const d=(ph==='in'?k:1-k)*M.len;const q=merchAt(d);const dir=ph==='in'?1:-1;p.x=q[0];p.z=q[1];p.h=Math.atan2(q[2]*dir,q[3]*dir);p.mode='walk';p.anim='idle';
+  const hq=merchAt(d-dir*2.6);M.horse.position.set(hq[0],G(hq[0],hq[1]),hq[1]);M.horse.rotation.y=Math.atan2(-hq[3]*dir,hq[2]*dir);M.pack.visible=true;M.stall.visible=false;
+  M.doing=ph==='in'?'A travelling merchant on his way to '+place+' with '+ware+'.':'A travelling merchant, packed up and leaving town.';
+  M.news=ph==='in'?' A travelling merchant with a pack horse is coming up the road.':' The travelling merchant is leaving town.'}}
+function merchNews(){return MERCH&&MERCH.on?MERCH.news:''}
 function buildPeopleGame(){P.length=0;colorsDirty=colorsDirtyA=true;CRAFTN.clear();ANIMALS.length=0;for(const h of HOUSES)h.occ=[];if(CART)CART.visible=false;
  const res=STATE?STATE.residents||[]:[];const sites=GIDS.filter(id=>stOf(id)==='scaffold');const HO=houseOrder();let workers=0;
  res.forEach((r,i)=>{const job=r.job||'peasant';const guard=GUARDJ.has(job),cler=CLERGYJ.has(job);
@@ -1248,7 +1291,7 @@ function buildPeopleGame(){P.length=0;colorsDirty=colorsDirtyA=true;CRAFTN.clear
  if(isBuilt('henhouse'))add('hen',6,-10,6,3.5,()=>pick(['#8a5a30','#e8e0cc']));
  for(const k of HO.slice(0,12)){if(!isBuilt('house'+k))continue;const t=TOFTS[k];if(t)add('hen',2,t.x,t.z,3,()=>pick(['#8a5a30','#a06a3a','#e8e0cc']))}}
 const JOBTXT={weaver:'Weaver',shoemaker:'Shoemaker',tailor:'Tailor',cooper:'Cooper',potter:'Potter',butcher:'Butcher',turner:'Wood turner',dyer:'Dyer',furrier:'Furrier',ropemaker:'Ropemaker',saddler:'Saddler',merchant:'Merchant',maid:'Household servant',carrier:'Carrier',peasant:'Peasant',cottar:'Cottar, a smallholder',labourer:'Labourer',carpenter:'Carpenter',watchman:'Watchman',castellan:'Castellan',steward:'Steward',servant:'Servant','water carrier':'Water carrier',chaplain:'Chaplain',cook:'Cook',scullion:'Kitchen hand','pit cleaner':'Privy cleaner',ploughman:'Ploughman','field warden':'Field warden','parish priest':'Parish priest','tithe-taker':'Tithe collector',miller:'Miller',smith:'Smith',groom:'Groom',carter:'Carter',brewster:'Brewer','grut-mistress':'Grut maker',baker:'Baker',fisher:'Fisher',mason:'Mason',guard:'Guard','tower watchman':'Tower watchman',gatekeeper:'Gatekeeper',crossbowman:'Crossbowman',chapman:'Trader','market reeve':'Market overseer',bathman:'Bath keeper','hospital brother':'Hospital brother','hospital sister':'Hospital sister',tanner:'Tanner','town clerk':'Town clerk','ditch-digger':'Ditch digger'};
-function doingTxt(p){if(p.act==='craft')return'Working in the workshop at the front of the house.';if(p.act==='craftin')return'Working inside the workshop.';if(p.act==='busyin')return'Busy in the house or the shop.';if(p.act==='market')return'Trading at the market.';if(p.act==='errand')return'Fetching water from the well.';if(p.act==='carry')return'Carrying goods through town.';if(p.act==='build')return'Working on the building site: '+CARDS2[p.site].name+'.';if(p.act==='watch')return'On watch.';if(p.act==='fields')return'Working in the fields.';if(p.act==='home')return'Busy at home.';if(p.act==='garden')return'Digging the kitchen garden behind the house.';if(p.act==='hens')return'Feeding the hens and the pig.';if(p.act==='wood')return'Chopping firewood.';if(p.act==='water')return'Fetching water from the well.';if(p.act==='hearth')return'Inside, cooking and keeping the fire going.';if(p.act==='spin')return'Spinning yarn by the door.';if(p.act==='mend')return'Mending tools by the house.';if(p.act==='green')return'Out on the village green.';const at=JOBAT[p.job];return at&&CARDS2[at]?'At work: '+CARDS2[at].name+'.':''}
+function doingTxt(p){if(p.act==='merchant')return MERCH?MERCH.doing:'Trading.';if(p.act==='craft')return'Working in the workshop at the front of the house.';if(p.act==='craftin')return'Working inside the workshop.';if(p.act==='busyin')return'Busy in the house or the shop.';if(p.act==='market')return'Trading at the market.';if(p.act==='errand')return'Fetching water from the well.';if(p.act==='carry')return'Carrying goods through town.';if(p.act==='build')return'Working on the building site: '+CARDS2[p.site].name+'.';if(p.act==='watch')return'On watch.';if(p.act==='fields')return'Working in the fields.';if(p.act==='home')return'Busy at home.';if(p.act==='garden')return'Digging the kitchen garden behind the house.';if(p.act==='hens')return'Feeding the hens and the pig.';if(p.act==='wood')return'Chopping firewood.';if(p.act==='water')return'Fetching water from the well.';if(p.act==='hearth')return'Inside, cooking and keeping the fire going.';if(p.act==='spin')return'Spinning yarn by the door.';if(p.act==='mend')return'Mending tools by the house.';if(p.act==='sweep')return'Sweeping in front of the house.';if(p.act==='churn')return'Churning butter by the door.';if(p.act==='laundry')return'Washing the laundry and beating it clean.';if(p.act==='sawing')return'Sawing timber for the house.';if(p.act==='green')return'Out on the village green.';const at=JOBAT[p.job];return at&&CARDS2[at]?'At work: '+CARDS2[at].name+'.':''}
 /* ================= trees (instanced) ================= */
 const ROOFM=new Set([MAT.pond,MAT.thatch,MAT.thatch2,MAT.thatch3,MAT.thatchD,MAT.shingle,MAT.slate,MAT.tile,MAT.tile2,MAT.glow,MAT.green]);
 const KEEPM=new Set([MAT.timber,MAT.fence]);
@@ -1514,7 +1557,7 @@ function setStay(p,x,z,face,anim){p.work={x,z,face,anim};p.x=x;p.z=z;p.anim=anim
 function setLoop(p,pts,pause,anim,carry){p.loop={pts,i:0,pause:pause||4,carry};p.work={x:pts[0][0],z:pts[0][1],anim:anim||'idle'};p.x=pts[0][0];p.z=pts[0][1]}
 function setWander(p,cx,cz,rad,anim,rz){p.wander={cx,cz,rad,rz:rz||rad};p.work={x:cx,z:cz,anim:anim||'idle'};p.x=cx+(R()-.5)*rad;p.z=cz+(R()-.5)*rad}
 const near=(x,z,r=2)=>[x+(R()-.5)*r,z+(R()-.5)*r];
-function buildPeople(){return buildPeopleGame()}
+function buildPeople(){const r=buildPeopleGame();try{merchSetup()}catch(e){console.warn(e)}return r}
 function buildPeopleDemo(){P.length=0;ANIMALS.length=0;for(const h of HOUSES)h.occ=[];for(const h of TOWNH)h.occ=[];const nov=MONTH==='nov';
  const fam=HOUSES.filter(h=>h.name!=='alehouse'&&!(BIG&&h.v));const tofts=TOFTS.filter(t=>!(BIG&&t.v));
  // castle
@@ -1679,6 +1722,9 @@ const PPL=(()=>{const lo=lowEnd,L=c=>new THREE.Color(c);
  return{body,arm,leg,head,hood,veil,faceV,fMat,headMat,clothMat,sword,bow,BR}})();
 const BODYG=PPL.body;
 const PM={legL:pm(PPL.leg,PPL.fMat()),legR:pm(PPL.leg,PPL.fMat()),body:pm(BODYG,PPL.fMat()),head:pm(PPL.head,PPL.headMat),hood:pm(PPL.hood,PPL.clothMat()),veil:pm(PPL.veil,PPL.clothMat()),armL:pm(PPL.arm,PPL.fMat()),armR:pm(PPL.arm,PPL.fMat()),sword:pm(PPL.sword,PPL.fMat()),bow:pm(PPL.bow,PPL.fMat()),tool:pm(BOX,std('#6a5038')),load:pm(BOX,pMat())};
+{const mk=(g,sh)=>{const m=pm(g,pMat());m.castShadow=sh;const c=new THREE.Color(1,1,1);for(let j=0;j<NP;j++){m.setMatrixAt(j,ZERO0);m.setColorAt(j,c)}return m};
+ const ZERO0=new THREE.Matrix4().makeScale(0,0,0);
+ PM.thead=mk(BOX,true);PM.pc_b=mk(BOX,!lowEnd);PM.pc_b2=mk(BOX,!lowEnd);PM.pc_r=mk(new THREE.CylinderGeometry(.9,1,1,12),!lowEnd);PM.pc_h=mk(new THREE.SphereGeometry(1,10,6,0,Math.PI*2,0,Math.PI/2),!lowEnd)}
 /* animals */
 function animalGeo(parts){const gs=parts.map(([sx,sy,sz,x,y,z])=>{const g=BOX.clone();g.scale(sx,sy,sz);g.translate(x,y,z);return g.toNonIndexed()});return mergeGeometries(gs)}
 const legs=(bx,bz,len,w)=>[[w,len,w,bx,len/2,bz],[w,len,w,bx,len/2,-bz],[w,len,w,-bx,len/2,bz],[w,len,w,-bx,len/2,-bz]];
@@ -1709,7 +1755,7 @@ function route(a,b){const[s,ds]=nearestNode(a[0],a[1]),[t,dt]=nearestNode(b[0],b
  for(;;){let u=-1,ud=1e9;for(let i=0;i<NODES.length;i++)if(!done[i]&&dist[i]<ud){ud=dist[i];u=i}if(u<0||u===t)break;done[u]=true;for(const[v,d]of NODES[u].adj)if(dist[u]+d<dist[v]){dist[v]=dist[u]+d;prev[v]=u}}
  const path=[];let c=t;while(c>=0){path.unshift(NODES[c].p);if(c===s)break;c=prev[c]}return[a,...path,b]}
 function goTo(p,target,goal){p.path=route([p.x,p.z],target);p.pi=1;p.mode='walk';p.goal=goal;p.inside=false}
-let SUNRISE=7.6,SUNSET=16.1;
+let SUNRISE=6,SUNSET=22;
 function workHours(h){return h>=SUNRISE+.4&&h<SUNSET+.3}
 function actorStep(p,dt){const A=p.actor;p.inside=false;p.yAbs=A.y??null;p.loop=null;p.run=!!A.run;
  if(A.to){const dx=A.to[0]-p.x,dz=A.to[1]-p.z,d=Math.hypot(dx,dz),st=(A.spd||1.3)*(A.run?1.9:1)*dt;
@@ -1718,7 +1764,7 @@ function actorStep(p,dt){const A=p.actor;p.inside=false;p.yAbs=A.y??null;p.loop=
 function stepPeople(dt,hour,t){
  const work=workHours(hour);
  for(const p of P){
-  if(p.actor){actorStep(p,dt);continue}if(p.indoorsAlways){p.inside=true;continue}
+  if(p.actor){actorStep(p,dt);continue}if(p.merchant){merchStep(p,hour);continue}if(p.indoorsAlways){p.inside=true;continue}
   if(p.patrol){if(!WALLWALK.length)continue;const n=WALLWALK.length;if(p.prog==null)p.prog=Math.min(p.patrol.i,n-1.01);p.prog+=dt*.18*p.patrol.dir;if(p.prog>n-1.001){p.prog=n-1.001;p.patrol.dir=-1}if(p.prog<0){p.prog=0;p.patrol.dir=1}let i0=Math.floor(p.prog);if(Math.hypot(WALLWALK[i0+1][0]-WALLWALK[i0][0],WALLWALK[i0+1][2]-WALLWALK[i0][2])>7){p.prog=p.patrol.dir>0?i0:i0+.999;p.patrol.dir*=-1;i0=Math.floor(p.prog)}const f=p.prog-i0;const a=WALLWALK[i0],b=WALLWALK[Math.min(n-1,i0+1)];p.x=a[0]+(b[0]-a[0])*f;p.z=a[2]+(b[2]-a[2])*f;p.yAbs=a[1]+(b[1]-a[1])*f;p.h=Math.atan2(b[0]-a[0],b[2]-a[2])+(p.patrol.dir<0?Math.PI:0);p.mode='walk';p.inside=false;continue}
   if(p.keepTop){const r=.15,u=Math.sin(t*.15)*2.5,v=3.25,sg=Math.cos(t*.15)>=0?1:-1;p.x=p.keepTop.x+u*Math.cos(r)+v*Math.sin(r);p.z=p.keepTop.z-u*Math.sin(r)+v*Math.cos(r);p.yAbs=p.keepTop.y;p.h=Math.atan2(sg*Math.cos(r),-sg*Math.sin(r));p.mode='walk';p.inside=false;continue}
   if(p.plough||p.treadIdx!=null){p.inside=!work&&p.night!=='stay';continue}
@@ -1747,9 +1793,64 @@ const M0=new THREE.Matrix4(),M1=new THREE.Matrix4(),UP=new THREE.Matrix4(),TMP=n
 const col=new THREE.Color();
 const T_=(m,x,y,z)=>m.multiply(TMP.makeTranslation(x,y,z)),RX=(m,a)=>m.multiply(TMP.makeRotationX(a)),RZ=(m,a)=>m.multiply(TMP.makeRotationZ(a)),S_=(m,x,y,z)=>m.multiply(TMP.makeScale(x,y,z));
 let colorsDirty=true;
+const LABE=k=>k<0?0:k>1?1:k*k*(3-2*k);
+// tool: [handle length, handle start (behind the hand), head size, head color, head offset]
+const LTOOL={hammer:[.36,-.05,[.07,.2,.09],'#55524e',0],mallet:[.3,-.04,[.15,.15,.2],'#8a6a46',0],spade:[1.05,-.2,[.22,.03,.28],'#6d6a66',.1],
+ axe:[.72,-.06,[.04,.2,.16],'#5a5752',-.04],saw:[.12,-.04,[.02,.15,.62],'#8c8a86',.28],paddle:[1,-.25,[.12,.03,.22],'#8a6a46',.06],
+ broom:[1.15,-.2,[.32,.09,.3],'#b89650',.06],plunger:[.95,-.2,[.14,.04,.14],'#8a6a46',0],beater:[.42,-.05,[.11,.03,.24],'#8a6a46',.08],
+ spindle:[.34,0,[.09,.09,.03],'#8a6a46',-.04],scraper:[.26,-.06,[.18,.03,.05],'#6d6a66',0],brush:[.12,-.02,[.12,.07,.16],'#7a5a3a',0]};
+// work pieces in front of the worker: [mesh, x,y,z, sx,sy,sz, turn, color]
+const LPIECE={stone:[['b',0,.23,.66,.6,.46,.46,.25,'#bdb4a3']],beam:[['b',.1,.13,.8,1.7,.24,.26,0,'#8a6a46']],
+ trestle:[['b',.15,.66,.72,1.8,.22,.24,0,'#8a6a46'],['b2',.75,.28,.72,.22,.56,.55,0,'#6f5236'],['h',-.2,0,.72,.22,.1,.22,0,'#d8c08a'],['r',-.55,.28,.72,.17,.56,.17,0,'#6f5236']],
+ bench:[['b',.12,.29,.58,.75,.58,.42,0,'#7d5e3f'],['b2',-.15,.62,.62,.3,.08,.22,.3,'#c9b48a']],
+ anvil:[['b',0,.5,.64,.26,.18,.52,0,'#3c3a38'],['b2',0,.2,.64,.36,.42,.36,0,'#6f5236']],
+ log:[['r',0,.25,.8,.24,.5,.24,0,'#7a5a3a'],['b2',-.8,.12,.3,.55,.24,.32,.6,'#9a7448']],
+ heap:[['h',1.05,0,.2,.6,.32,.6,0,'#6b5034']],tub:[['r',0,.27,.68,.42,.54,.42,0,'#6a4a30']],
+ wash:[['r',0,.25,.74,.45,.5,.45,0,'#6a4a30'],['b2',0,.52,.74,.42,.05,.34,.2,'#ebe5d6']],
+ churn:[['r',0,.4,.52,.17,.8,.17,0,'#7a5a3a']],hide:[['b',0,.57,.8,.65,.05,.75,0,'#a8835a'],['b2',0,.27,.8,.3,.52,.3,0,'#6f5236']]};
+const LAB={hammer:1,mason:1,saw:1,dig:1,chop:1,stir:1,sweep:1,churn:1,wash:1,spin:1,bend:1,brush:1};
+function labKit(p,a){const j=p.job;
+ if(a==='hammer')return{tool:'hammer',piece:j==='smith'?'anvil':p.site?'beam':'bench'};
+ if(a==='mason')return{tool:'mallet',piece:'stone'};if(a==='saw')return{tool:'saw',piece:'trestle'};
+ if(a==='dig')return{tool:'spade',piece:p.wander?null:'heap'};if(a==='chop')return{tool:'axe',piece:'log'};
+ if(a==='stir')return{tool:'paddle',piece:'tub'};if(a==='sweep')return{tool:'broom'};if(a==='churn')return{tool:'plunger',piece:'churn'};
+ if(a==='wash')return{tool:'beater',piece:'wash'};if(a==='spin')return{tool:'spindle'};if(a==='brush')return{tool:'brush'};
+ if(a==='bend'){const hide=j==='tanner'||j==='furrier';return{tool:hide?'scraper':null,piece:hide?'hide':null}}return null}
+function laborPose(p,t,a){const ph=p.ph;let legL=0,legR=0,aL=-.05,aR=-.05,pitch=0,yaw=0,tg=1.2,lock=null;
+ const rw=((t/17+ph*.37)%1+1)%1;
+ if(rw>.88&&a!=='spin'){const k=(rw-.88)/.12;aR=-.2;aL=k>.15&&k<.55?-2.55:-.05;pitch=-.04;return{legL,legR,aL,aR,pitch,yaw,tool:0,lab:a,tg:a==='dig'||a==='sweep'||a==='stir'||a==='churn'?1.5-aR:1.3}}
+ const cyc=P=>(((t+ph*3)/P)%1+1)%1;
+ const strike=(u,up)=>u<up?LABE(u/up):u<up+.08?1-(u-up)/.08:0;
+ if(a==='hammer'){const k=strike(cyc(.95),.6);aR=-.4-2*k;aL=-.7;pitch=(p.site?.45:.28)+.08*(1-k);tg=1.2}
+ else if(a==='mason'){const k=strike(cyc(.55),.55);aR=-.45-.9*k;aL=-.8;pitch=.5;tg=1.25}
+ else if(a==='saw'){const u=cyc(1.1),s=Math.sin(u*6.283);aR=-.95+.32*s;aL=-.55;pitch=.38+.05*s;lock=.5}
+ else if(a==='dig'){const u=cyc(2.6);
+  if(u<.3){const k=u/.3;pitch=.25+.1*k;aL=aR=-.6;legR=-.35*Math.sin(Math.PI*k);lock=1.35}
+  else if(u<.5){const k=(u-.3)/.2;pitch=.35+.2*k;aL=aR=-.6+.15*k;lock=1.35-.5*k}
+  else if(u<.8){const k=LABE((u-.5)/.3);pitch=.55-.3*k;aL=aR=-.45-.7*k;yaw=.75*k;lock=.85+.3*k}
+  else{const k=LABE((u-.8)/.2);yaw=.75*(1-k);pitch=.25;aL=aR=-1.15+.55*k;lock=1.15+.2*k}}
+ else if(a==='chop'){const k=strike(cyc(1.6),.62);aL=aR=-.45-2.45*k;pitch=.32-.3*k;tg=1.15}
+ else if(a==='stir'){const u=cyc(2.2),c=Math.cos(u*6.283),s=Math.sin(u*6.283);aL=aR=-.85+.18*s;yaw=.18*c;pitch=.3;lock=1.3}
+ else if(a==='sweep'){const s=Math.sin(cyc(1.3)*6.283);aR=-.55+.12*s;aL=-.85+.1*s;yaw=.45*s;pitch=.22;lock=1.05}
+ else if(a==='churn'){const v=.5+.5*Math.sin(cyc(1)*6.283);aL=aR=-.75-.45*v;pitch=.18;lock=1.57}
+ else if(a==='wash'){const k=strike(cyc(1.4),.55);aR=-.5-1.6*k;aL=-.6;pitch=.4;tg=1.3}
+ else if(a==='spin'){aL=-1.25;aR=-.55+.06*Math.sin(t*6+ph);lock=1.57}
+ else if(a==='bend'){const s=Math.sin(cyc(1.5)*6.283);pitch=.7+.06*s;aL=aR=-.95+.28*s;lock=1.3}
+ else if(a==='brush'){aR=-1.2+.3*Math.sin(t*5+ph);aL=-.4;tg=1.4}
+ if(lock!=null)tg=lock-aR;
+ return{legL,legR,aL,aR,pitch,yaw,tool:0,lab:a,tg}}
+const M2_=new THREE.Matrix4();
+function labDraw(p,ps,i,fem,M0){const L=ps.lab?labKit(p,ps.lab):null;
+ if(!L||!L.tool){PM.thead.setMatrixAt(i,ZERO);if(ps.lab)PM.tool.setMatrixAt(i,ZERO)}
+ else{const T=LTOOL[L.tool];M1.copy(UP);T_(M1,fem?.25:.215,1.45,0);RX(M1,ps.aR);T_(M1,0,-.56,0);RX(M1,ps.tg);
+  M2_.copy(M1);T_(M2_,0,0,T[1]+T[0]/2);S_(M2_,.045,.045,T[0]);PM.tool.setMatrixAt(i,M2_);
+  M2_.copy(M1);T_(M2_,0,0,T[1]+T[0]+T[4]);S_(M2_,T[2][0],T[2][1],T[2][2]);PM.thead.setMatrixAt(i,M2_);PM.thead.setColorAt(i,col.set(T[3]))}
+ const pcs=L&&L.piece?LPIECE[L.piece]:null;
+ for(const k of['b','b2','r','h']){const m=PM['pc_'+k];const e=pcs&&pcs.find(q=>q[0]===k);if(!e){m.setMatrixAt(i,ZERO);continue}
+  M2_.copy(M0);T_(M2_,e[1],e[2],e[3]);if(e[7])M2_.multiply(TMP.makeRotationY(e[7]));S_(M2_,e[4],e[5],e[6]);m.setMatrixAt(i,M2_);m.setColorAt(i,col.set(e[8]))}}
 function poseFor(p,t){const w=p.mode==='walk';const ph=t*7*(p.run?1.4:1)+p.ph;let legL=0,legR=0,aL=-.05,aR=-.05,pitch=0,tool=0;
  if(w){legL=Math.sin(ph)*.55;legR=-legL;aL=-Math.sin(ph)*.4;aR=-aL;if(p.loop&&p.loop.carry){const c=p.loop.carry;if(c==='stone'||c==='dish'){aL=aR=-.9}else if(c==='bucket'){aR=-.08}else{aR=-3.3}}if(p.tool>1.5){aR=-.35}}
- else{const a=p.anim;const s=Math.sin(t*4+p.ph);
+ else{const a=p.anim;if(LAB[a]&&!p.tool&&!p.loop)return laborPose(p,t,a);const s=Math.sin(t*4+p.ph);
   if(a==='hammer'){aR=-.5-1.5*(.5+.5*Math.sin(t*5+p.ph));aL=-.7;pitch=.15}
   else if(a==='flail'){const k=.5+.5*Math.sin(t*3.6+p.ph);aL=aR=-1.2-1.6*k;tool=1.6*k-1.1}
   else if(a==='chop'){const k=.5+.5*Math.sin(t*3+p.ph);aL=aR=-.6-2.2*k}
@@ -1780,7 +1881,7 @@ function updateInstances(t){
   const y=p.yAbs!=null?p.yAbs:G(x,z)+(p.yOff||0);p.y=y;
   const ps=poseFor(p,t);const s=p.scale;
   M0.makeRotationY(h).setPosition(x,y,z);S_(M0,s,s,s);
-  UP.copy(M0);T_(UP,0,.78,0);RX(UP,ps.pitch);T_(UP,0,-.78,0);
+  UP.copy(M0);T_(UP,0,.78,0);if(ps.yaw)UP.multiply(TMP.makeRotationY(ps.yaw));RX(UP,ps.pitch);T_(UP,0,-.78,0);
   const fem=p.sex==='f';
   M1.copy(M0);T_(M1,-.1,.78,0);RX(M1,ps.legL);T_(M1,0,-.38,0);S_(M1,.13,.76,.14);PM.legL.setMatrixAt(i,fem&&!p.child?ZERO:M1);
   M1.copy(M0);T_(M1,.1,.78,0);RX(M1,ps.legR);T_(M1,0,-.38,0);S_(M1,.13,.76,.14);PM.legR.setMatrixAt(i,fem&&!p.child?ZERO:M1);
@@ -1789,7 +1890,7 @@ function updateInstances(t){
   M1.copy(UP);T_(M1,0,1.68,0);S_(M1,.15,.16,.15);const veiled=fem&&!p.child;PM.hood.setMatrixAt(i,veiled?ZERO:M1);PM.veil.setMatrixAt(i,veiled?M1:ZERO);
   M1.copy(UP);T_(M1,fem&&!p.child?-.25:-.215,1.45,0);RX(M1,ps.aL);T_(M1,0,-.29,0);S_(M1,.1,.58,.11);PM.armL.setMatrixAt(i,M1);
   M1.copy(UP);T_(M1,fem&&!p.child?.25:.215,1.45,0);RX(M1,ps.aR);T_(M1,0,-.29,0);S_(M1,.1,.58,.11);PM.armR.setMatrixAt(i,M1);
-  if(p.tool&&p.role!=="guard"){M1.copy(UP);T_(M1,fem&&!p.child?.25:.215,1.45,0);RX(M1,ps.aR);T_(M1,0,-.56,0);RX(M1,(ps.tool||0)-1.4);T_(M1,0,p.tool*.45,0);S_(M1,.05,p.tool,.05);PM.tool.setMatrixAt(i,M1)}else PM.tool.setMatrixAt(i,ZERO);if(p.role==="guard"){M1.copy(UP);T_(M1,-.2,.98,.07);RX(M1,.38);PM.sword.setMatrixAt(i,M1);if(p.id%2===0){M1.copy(UP);T_(M1,0,1.18,-.2);M1.multiply(PPL.BR);PM.bow.setMatrixAt(i,M1)}else PM.bow.setMatrixAt(i,ZERO)}else{PM.sword.setMatrixAt(i,ZERO);PM.bow.setMatrixAt(i,ZERO)}
+  if(p.tool&&p.role!=="guard"){M1.copy(UP);T_(M1,fem&&!p.child?.25:.215,1.45,0);RX(M1,ps.aR);T_(M1,0,-.56,0);RX(M1,(ps.tool||0)-1.4);T_(M1,0,p.tool*.45,0);S_(M1,.05,p.tool,.05);PM.tool.setMatrixAt(i,M1)}else if(!ps.lab)PM.tool.setMatrixAt(i,ZERO);labDraw(p,ps,i,fem&&!p.child,M0);if(p.role==="guard"){M1.copy(UP);T_(M1,-.2,.98,.07);RX(M1,.38);PM.sword.setMatrixAt(i,M1);if(p.id%2===0){M1.copy(UP);T_(M1,0,1.18,-.2);M1.multiply(PPL.BR);PM.bow.setMatrixAt(i,M1)}else PM.bow.setMatrixAt(i,ZERO)}else{PM.sword.setMatrixAt(i,ZERO);PM.bow.setMatrixAt(i,ZERO)}
   const carry=p.loop&&p.loop.carry&&p.mode==='walk'?p.loop.carry:null;
   if(carry){M1.copy(UP);if(carry==='sack'||carry==='faggot'||carry==='sheaf'){T_(M1,.15,1.62,-.18);S_(M1,carry==='faggot'?.9:.45,.4,carry==='faggot'?.35:.4)}else if(carry==='bucket'){T_(M1,.32,.85,0);S_(M1,.28,.3,.28)}else if(carry==='stone'){T_(M1,0,1.15,.35);S_(M1,.5,.35,.35)}else{T_(M1,0,1.25,.35);S_(M1,.4,.12,.3)}PM.load.setMatrixAt(i,M1)}else PM.load.setMatrixAt(i,ZERO);
   if(carry)PM.load.setColorAt(i,col.set({bucket:'#6a5038',sack:'#d9cfb4',faggot:'#6b5236',sheaf:'#c9a442',stone:'#c4bba8',dish:'#9a8a70'}[carry]||'#c9b48a'));
@@ -1817,7 +1918,7 @@ let hourMode='auto',fixedHour=12,curHour=new Date().getHours()+new Date().getMin
 function nowHour(){if(hourMode!=='auto')return fixedHour;const d=new Date();return d.getHours()+d.getMinutes()/60}
 const skyDay=new THREE.Color(),tmpC=new THREE.Color();
 function applyLight(h){const rise=SUNRISE,set=SUNSET;const maxE=MONTH==='nov'?.52:.95;let k=(h-rise)/(set-rise);const day=k>0&&k<1;
- let elev=day?Math.sin(Math.PI*k)*maxE:-.2;const az=Math.PI*Math.min(1,Math.max(0,k));
+ let elev=day?Math.pow(Math.sin(Math.PI*k),.5)*maxE:-.2;const az=Math.PI*Math.min(1,Math.max(0,k));
  const dir=new THREE.Vector3(Math.cos(az)*Math.cos(Math.max(elev,.05)),Math.sin(Math.max(elev,.08)),Math.sin(az)*Math.cos(Math.max(elev,.05))*0.9+.3).normalize();
  const tgt=controls.target;sun.target.position.copy(tgt);sun.position.copy(tgt).addScaledVector(dir,320);
  const low=day?Math.min(1,elev/.35):0;
@@ -1881,7 +1982,7 @@ function resize(){const r=stage.getBoundingClientRect();renderer.setSize(r.width
 addEventListener('resize',resize);
 
 /* ================= build all ================= */
-function setMonth(m){MONTH=m;SUNRISE=m==='nov'?7.6:5.7;SUNSET=m==='nov'?16.1:20.3;
+function setMonth(m){MONTH=m;SUNRISE=6;SUNSET=22;
  buildTerrain();buildTrees();buildFlora();PLOUGH=null;buildGraph();buildPeople();colorsDirty=colorsDirtyA=true;
  placeAll();
  if(craneG){craneG.cover.visible=false;craneG.g.visible=false}
@@ -2094,12 +2195,12 @@ const $=id=>document.getElementById(id);
 function bell(h){const L=[[0,'Matins'],[3,'Lauds'],[6,'Prime'],[9,'Terce'],[12,'Sext'],[15,'None'],[17,'Vespers'],[19.5,'Compline'],[21,'Night']];let n='Night';for(const[t,s]of L)if(h>=t)n=s;return n}
 const SPOTS={market:[MARKET[0],MARKET[1],70],barn:[BARN[0],BARN[1]+2,55],woods:[-140,-112,70],southField:[0,56,80],northField:[80,-150,120],westField:[-185,20,90],lodge:[LODGE?LODGE.x:0,LODGE?LODGE.z:0,40],castle:[-30,-30,70],tower:[CONSTRUCTION.x,CONSTRUCTION.z,40],green:[GREEN[0],GREEN[1],50],mill:[MILL[0],MILL[2],40]};
 let lastHUD='';
-function renderHUD(force){const h=curHour;const work=workHours(h);$('indoors').textContent=P.length?`· ${P.filter(p=>!p.inside).length} outside now`:'';const sites=GIDS.filter(id=>stOf(id)==='scaffold');const key=work+bell(h)+hourMode+sites.join()+(STATE&&STATE.castle.name);if(!force&&key===lastHUD)return;lastHUD=key;
+function renderHUD(force){const h=curHour;const work=workHours(h);$('indoors').textContent=P.length?`· ${P.filter(p=>!p.inside).length} outside now`:'';const sites=GIDS.filter(id=>stOf(id)==='scaffold');const key=work+bell(h)+hourMode+lightTxt(h)+(MERCH&&MERCH.on?MERCH.ph+MERCH.who:'')+sites.join()+(STATE&&STATE.castle.name);if(!force&&key===lastHUD)return;lastHUD=key;
  const hh=String(Math.floor(h)).padStart(2,'0')+':'+String(Math.floor((h%1)*60)).padStart(2,'0');
  const head=work?(sites.length?'Work goes on at the building site.':'A working day.'):(h<SUNRISE+.4&&h>3?'Before dawn. Shutters closed, fires still covered.':'Curfew. Fires covered, gates shut.');
- const chips=[...sites.map(id=>[CARDS2[id].name,'b:'+id]),['The castle','castle'],['Village green','green']];if(hourMode!=='auto')chips.unshift(['↺ Back to your time','daytoggle']);else if(!work)chips.unshift(['☀ See it by day','daytoggle']);
- $('now').innerHTML=`<span class="k">Now in ${esc(STATE&&STATE.castle.name||'the castle')} · your time ${hh}</span><span class="bell">Bell: ${bell(h)}. ${head}</span><div class="chips">${chips.map(([t,k])=>`<button class="chip" data-k="${k}">${esc(t)}</button>`).join('')}</div>`;
- $('now').querySelectorAll('.chip').forEach(b=>b.onclick=()=>{const k=b.dataset.k;if(k==='daytoggle'){if(hourMode==='auto'){hourMode='fixed';fixedHour=12}else hourMode='auto';curHour=nowHour();renderHUD(true);return}if(k.startsWith('b:')){const id=k.slice(2);const f=GB[id].ring?{x:GB[id].ring[0],z:GB[id].ring[1]}:GB[id].feet[0];flyTo(f.x,f.z,GB[id].feet.length>6?110:50);return}const s=SPOTS[k];flyTo(s[0],s[1],s[2])})}
+ const chips=[...sites.map(id=>[CARDS2[id].name,'b:'+id]),['The castle','castle'],['Village green','green']];if(MERCH&&MERCH.on)chips.unshift(['🐴 Travelling merchant','merchant']);if(hourMode!=='auto')chips.unshift(['↺ Back to your time','daytoggle']);else if(!work)chips.unshift(['☀ See it by day','daytoggle']);
+ $('now').innerHTML=`<span class="k">Now in ${esc(STATE&&STATE.castle.name||'the castle')} · your time ${hh}</span><span class="bell">Bell: ${bell(h)}. ${head} <b class="lt">${lightTxt(h)}.</b>${merchNews()}</span><div class="chips">${chips.map(([t,k])=>`<button class="chip" data-k="${k}">${esc(t)}</button>`).join('')}</div>`;
+ $('now').querySelectorAll('.chip').forEach(b=>b.onclick=()=>{const k=b.dataset.k;if(k==='merchant'){if(MERCH&&MERCH.p)flyTo(MERCH.p.x,MERCH.p.z,26);return}if(k==='daytoggle'){if(hourMode==='auto'){hourMode='fixed';fixedHour=12}else hourMode='auto';curHour=nowHour();renderHUD(true);return}if(k.startsWith('b:')){const id=k.slice(2);const f=GB[id].ring?{x:GB[id].ring[0],z:GB[id].ring[1]}:GB[id].feet[0];flyTo(f.x,f.z,GB[id].feet.length>6?110:50);return}const s=SPOTS[k];flyTo(s[0],s[1],s[2])})}
 function renderHUDDemo(force){const h=curHour;const work=workHours(h);$('indoors').textContent=`· ${P.filter(p=>!p.inside).length} outside now`;const key=MONTH+work+bell(h)+(hourMode);if(!force&&key===lastHUD)return;lastHUD=key;
  const hh=String(Math.floor(h)).padStart(2,'0')+':'+String(Math.floor((h%1)*60)).padStart(2,'0');
  let chips,head;
@@ -2109,7 +2210,7 @@ function renderHUDDemo(force){const h=curHour;const work=workHours(h);$('indoors
  $('now').innerHTML=`<span class="k">Now in Hardlington · your time ${hh}</span><span class="bell">Bell: ${bell(h)}. ${head}</span><div class="chips">${chips.map(([t,k])=>`<button class="chip" data-k="${k}">${t}</button>`).join('')}</div>`;
  $('now').querySelectorAll('.chip').forEach(b=>b.onclick=()=>{if(b.dataset.k==='chron'){chronicleView();return}const s=SPOTS[b.dataset.k];flyTo(s[0],s[1],s[2])})}
 function btns(el,items,isOn,onClick){el.innerHTML='';for(const[k,l]of items){const b=document.createElement('button');b.className='btn';b.textContent=l;b.setAttribute('aria-pressed',isOn(k));b.onclick=()=>{onClick(k);btns(el,items,isOn,onClick)};el.appendChild(b)}}
-btns($('times'),[['auto','Your time'],[9,'Morning'],[12,'Noon'],[16,'Dusk'],[22,'Night']],k=>k==='auto'?hourMode==='auto':hourMode==='fixed'&&fixedHour===k,k=>{if(k==='auto')hourMode='auto';else{hourMode='fixed';fixedHour=k;if(MONTH==='aug'&&k===16)fixedHour=20.2}placeAll();renderHUD(true)});
+btns($('times'),[['auto','Your time'],[9,'Morning'],[12,'Noon'],[21.4,'Dusk'],[23,'Night']],k=>k==='auto'?hourMode==='auto':hourMode==='fixed'&&fixedHour===k,k=>{if(k==='auto')hourMode='auto';else{hourMode='fixed';fixedHour=k;if(MONTH==='aug'&&k===16)fixedHour=20.2}placeAll();renderHUD(true)});
 btns($('fx'),[['fx','Effects'],['wood','Woodcut'],['marks','Names']],k=>k==='fx'?FX:k==='marks'?MARKSON:WOOD,k=>{if(k==='marks'){MARKSON=!MARKSON;return}if(k==='fx')FX=!FX;else{WOOD=!WOOD;inkPass.uniforms.wood.value=WOOD?1:0;inkPass.uniforms.lw.value=Math.max(1,renderer.getPixelRatio()*(WOOD?1.4:1.1))}});
 function setPop(n){POP=n;STAGE=n>=5000?2:n>1000?1:0;BIG=STAGE>=1;CITY=STAGE===2;townGroup.visible=BIG;paliGroup.visible=STAGE===1;cityGroup.visible=CITY;villageGroup.visible=!BIG;PADMODE={stage:STAGE,city:BIG};
  if(flagMeshes[0])flagMeshes[0].position.y=FLAGS[0][1]+(CITY?11.6:0);
@@ -2201,7 +2302,7 @@ function applyState(s){STATE=s;const want={};for(const id of GIDS)want[id]=['non
  renderState();renderHUD(true);const ld=document.getElementById('loading');if(ld)ld.remove()}
 let lastUpd=null;
 async function loadState(){for(const u of['state.json','https://castle.hardlydarkages.com/state.json']){try{const r=await fetch(u+'?t='+Date.now(),{cache:'no-store'});if(!r.ok)continue;const j=await r.json();if(j&&j.version)return j}catch(e){}}return null}
-const SNAPSHOT={"updated":"2026-11-25T22:26:02Z","version":1,"seed":1066,"started":true,"start":"2026-11-24T16:30:00Z","castle":{"name":null,"phase":2},"population":{"total":33,"youtube":17,"instagram":16,"named":2},"stones":{"stock":0,"thisWeek":7,"total":7},"buildings":[{"id":"motte","state":"building","started":"2026-11-24T16:30:00Z","week":1,"stones":7,"need":15,"progress":0.47,"readyAt":null},{"id":"bailey","state":"queued"}],"vote":{"id":"w1","kind":"name","opens":"2026-11-24T16:30:00Z","closes":"2026-11-29T18:00:00Z","options":[{"key":"A","id":"Hardlington","votes":5},{"key":"B","id":"Castle Nottoodark","votes":0},{"key":"C","id":"Little Mudbury","votes":1}]},"history":[],"residents":[{"id":"nce535cff","name":"tiltmate","p":"ig","job":"peasant","home":"h1","since":"2026-11-24"},{"id":"n5372c093","name":"nzumw_","p":"ig","job":"peasant","home":"h1","since":"2026-11-25"},{"id":"a0","name":null,"anon":"Elisabeth zum Brunnen","sex":"f","job":"peasant","home":"h1"},{"id":"a1","name":null,"anon":"Dietrich zur Mühle","sex":"m","job":"cottar","home":"h1"},{"id":"a2","name":null,"anon":"Peter Lederer","sex":"m","job":"peasant","home":"h1"},{"id":"a3","name":null,"anon":"Wigand Seiler","sex":"m","job":"peasant","home":"h2"},{"id":"a4","name":null,"anon":"Hugo zur Mühle","sex":"m","job":"peasant","home":"h2"},{"id":"a5","name":null,"anon":"Berthold Sporer","sex":"m","job":"cottar","home":"h2"},{"id":"a6","name":null,"anon":"Wigand am Weg","sex":"m","job":"peasant","home":"h2"},{"id":"a7","name":null,"anon":"Albrecht am Berg","sex":"m","job":"peasant","home":"h2"},{"id":"a8","name":null,"anon":"Otto am Berg","sex":"m","job":"peasant","home":"h3"},{"id":"a9","name":null,"anon":"Gertrud am Weg","sex":"f","job":"cottar","home":"h3"},{"id":"a10","name":null,"anon":"Heinrich Metzger","sex":"m","job":"peasant","home":"h3"},{"id":"a11","name":null,"anon":"Otto Weber","sex":"m","job":"peasant","home":"h3"},{"id":"a12","name":null,"anon":"Eberhard Wirt","sex":"m","job":"peasant","home":"h3"},{"id":"a13","name":null,"anon":"Heinrich vom Bach","sex":"m","job":"cottar","home":"h4"},{"id":"a14","name":null,"anon":"Ulrich am Graben","sex":"m","job":"peasant","home":"h4"},{"id":"a15","name":null,"anon":"Elisabeth Seilerin","sex":"f","job":"peasant","home":"h4"},{"id":"a16","name":null,"anon":"Richenza vom Bach","sex":"f","job":"peasant","home":"h4"},{"id":"a17","name":null,"anon":"Friedrich Metzger","sex":"m","job":"cottar","home":"h4"},{"id":"a18","name":null,"anon":"Gisela Kellerin","sex":"f","job":"peasant","home":"h5"},{"id":"a19","name":null,"anon":"Johannes Lederer","sex":"m","job":"peasant","home":"h5"},{"id":"a20","name":null,"anon":"Friedrich Krämer","sex":"m","job":"peasant","home":"h5"},{"id":"a21","name":null,"anon":"Agnes im Hof","sex":"f","job":"cottar","home":"h5"},{"id":"a22","name":null,"anon":"Albrecht am Graben","sex":"m","job":"peasant","home":"h5"},{"id":"a23","name":null,"anon":"Adelheid am Graben","sex":"f","job":"peasant","home":"h6"},{"id":"a24","name":null,"anon":"Hugo zum Tor","sex":"m","job":"peasant","home":"h6"},{"id":"a25","name":null,"anon":"Hedwig zum Tor","sex":"f","job":"cottar","home":"h6"},{"id":"a26","name":null,"anon":"Nikolaus Färber","sex":"m","job":"peasant","home":"h6"},{"id":"a27","name":null,"anon":"Gertrud Meierin","sex":"f","job":"peasant","home":"h6"},{"id":"a28","name":null,"anon":"Hermann zur Mühle","sex":"m","job":"peasant","home":"h7"},{"id":"a29","name":null,"anon":"Werner zur Mühle","sex":"m","job":"cottar","home":"h7"},{"id":"a30","name":null,"anon":"Jutta zur Linde","sex":"f","job":"peasant","home":"h7"}],"chronicle":[{"t":"2026-11-24T16:30:00Z","week":1,"text":"Sir Hardly plants his banner. Work begins on the motte."}],"stale":{}};
+const SNAPSHOT={"updated":"2026-11-26T06:21:58Z","version":1,"seed":1066,"started":true,"start":"2026-11-24T16:30:00Z","castle":{"name":null,"phase":2},"population":{"total":33,"youtube":17,"instagram":16,"named":3},"stones":{"stock":0,"thisWeek":7,"total":7},"buildings":[{"id":"motte","state":"building","started":"2026-11-24T16:30:00Z","week":1,"stones":7,"need":15,"progress":0.47,"readyAt":null},{"id":"bailey","state":"queued"}],"vote":{"id":"w1","kind":"name","opens":"2026-11-24T16:30:00Z","closes":"2026-11-29T18:00:00Z","options":[{"key":"A","id":"Hardlington","votes":5},{"key":"B","id":"Castle Nottoodark","votes":0},{"key":"C","id":"Little Mudbury","votes":1}]},"history":[],"residents":[{"id":"nce535cff","name":"tiltmate","p":"ig","job":"peasant","home":"h1","since":"2026-11-24"},{"id":"n5372c093","name":"nzumw_","p":"ig","job":"peasant","home":"h1","since":"2026-11-25"},{"id":"n29c21210","name":"perez.s.maxi","p":"ig","job":"peasant","home":"h1","since":"2026-11-25"},{"id":"a0","name":null,"anon":"Elisabeth zum Brunnen","sex":"f","job":"cottar","home":"h1"},{"id":"a1","name":null,"anon":"Dietrich zur Mühle","sex":"m","job":"peasant","home":"h1"},{"id":"a2","name":null,"anon":"Peter Lederer","sex":"m","job":"peasant","home":"h2"},{"id":"a3","name":null,"anon":"Wigand Seiler","sex":"m","job":"peasant","home":"h2"},{"id":"a4","name":null,"anon":"Hugo zur Mühle","sex":"m","job":"cottar","home":"h2"},{"id":"a5","name":null,"anon":"Berthold Sporer","sex":"m","job":"peasant","home":"h2"},{"id":"a6","name":null,"anon":"Wigand am Weg","sex":"m","job":"peasant","home":"h2"},{"id":"a7","name":null,"anon":"Albrecht am Berg","sex":"m","job":"peasant","home":"h3"},{"id":"a8","name":null,"anon":"Otto am Berg","sex":"m","job":"cottar","home":"h3"},{"id":"a9","name":null,"anon":"Gertrud am Weg","sex":"f","job":"peasant","home":"h3"},{"id":"a10","name":null,"anon":"Heinrich Metzger","sex":"m","job":"peasant","home":"h3"},{"id":"a11","name":null,"anon":"Otto Weber","sex":"m","job":"peasant","home":"h3"},{"id":"a12","name":null,"anon":"Eberhard Wirt","sex":"m","job":"cottar","home":"h4"},{"id":"a13","name":null,"anon":"Heinrich vom Bach","sex":"m","job":"peasant","home":"h4"},{"id":"a14","name":null,"anon":"Ulrich am Graben","sex":"m","job":"peasant","home":"h4"},{"id":"a15","name":null,"anon":"Elisabeth Seilerin","sex":"f","job":"peasant","home":"h4"},{"id":"a16","name":null,"anon":"Richenza vom Bach","sex":"f","job":"cottar","home":"h4"},{"id":"a17","name":null,"anon":"Friedrich Metzger","sex":"m","job":"peasant","home":"h5"},{"id":"a18","name":null,"anon":"Gisela Kellerin","sex":"f","job":"peasant","home":"h5"},{"id":"a19","name":null,"anon":"Johannes Lederer","sex":"m","job":"peasant","home":"h5"},{"id":"a20","name":null,"anon":"Friedrich Krämer","sex":"m","job":"cottar","home":"h5"},{"id":"a21","name":null,"anon":"Agnes im Hof","sex":"f","job":"peasant","home":"h5"},{"id":"a22","name":null,"anon":"Albrecht am Graben","sex":"m","job":"peasant","home":"h6"},{"id":"a23","name":null,"anon":"Adelheid am Graben","sex":"f","job":"peasant","home":"h6"},{"id":"a24","name":null,"anon":"Hugo zum Tor","sex":"m","job":"cottar","home":"h6"},{"id":"a25","name":null,"anon":"Hedwig zum Tor","sex":"f","job":"peasant","home":"h6"},{"id":"a26","name":null,"anon":"Nikolaus Färber","sex":"m","job":"peasant","home":"h6"},{"id":"a27","name":null,"anon":"Gertrud Meierin","sex":"f","job":"peasant","home":"h7"},{"id":"a28","name":null,"anon":"Hermann zur Mühle","sex":"m","job":"cottar","home":"h7"},{"id":"a29","name":null,"anon":"Werner zur Mühle","sex":"m","job":"peasant","home":"h7"}],"chronicle":[{"t":"2026-11-24T16:30:00Z","week":1,"text":"Sir Hardly plants his banner. Work begins on the motte."}],"stale":{}};
 async function poll(){let j=await loadState();if(!j&&SNAPSHOT&&!lastUpd){j=SNAPSHOT;setTimeout(()=>{const k=document.querySelector('#now .k');if(k)k.insertAdjacentText('beforeend',' · offline copy from '+new Date(SNAPSHOT.updated).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}))},50)}if(!j){const ld=document.getElementById('loading');if(ld)ld.textContent='The castle could not be loaded. Please try again later.';return}if(j.updated!==lastUpd){lastUpd=j.updated;applyState(j)}}
 if(TESTMODE)window.BPV.applyState=applyState;
 poll();if(!TESTMODE){setInterval(poll,5*60e3);document.addEventListener('visibilitychange',()=>{if(!document.hidden)poll()})}
